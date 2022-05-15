@@ -1,6 +1,6 @@
-﻿namespace KaiwaProjects
+﻿namespace Savan
 {
-    partial class KpImageViewer
+    partial class ImageViewer
     {
         /// <summary>
         /// Required designer variable.
@@ -48,7 +48,7 @@
             this.btnBack = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.pbPanel = new System.Windows.Forms.PictureBox();
-            this.pbFull = new KaiwaProjects.PanelDoubleBuffered();
+            this.pbFull = new Savan.PanelDoubleBuffered();
             this.sbVert = new System.Windows.Forms.VScrollBar();
             this.sbHoriz = new System.Windows.Forms.HScrollBar();
             this.sbPanel = new System.Windows.Forms.Panel();
@@ -103,7 +103,7 @@
             // 
             // btnMode
             // 
-            this.btnMode.Image = global::KaiwaProjects.Properties.Resources.btnSelect;
+            this.btnMode.Image = global::Savan.Properties.Resources.btnSelect;
             this.btnMode.Location = new System.Drawing.Point(142, 1);
             this.btnMode.Name = "btnMode";
             this.btnMode.Size = new System.Drawing.Size(25, 25);
@@ -113,7 +113,7 @@
             // 
             // btnPreview
             // 
-            this.btnPreview.Image = global::KaiwaProjects.Properties.Resources.btnPreview;
+            this.btnPreview.Image = global::Savan.Properties.Resources.btnPreview;
             this.btnPreview.Location = new System.Drawing.Point(198, 1);
             this.btnPreview.Name = "btnPreview";
             this.btnPreview.Size = new System.Drawing.Size(25, 25);
@@ -135,7 +135,7 @@
             // 
             // btnFitToScreen
             // 
-            this.btnFitToScreen.Image = global::KaiwaProjects.Properties.Resources.btnFitToScreen;
+            this.btnFitToScreen.Image = global::Savan.Properties.Resources.btnFitToScreen;
             this.btnFitToScreen.Location = new System.Drawing.Point(58, 1);
             this.btnFitToScreen.Name = "btnFitToScreen";
             this.btnFitToScreen.Size = new System.Drawing.Size(25, 25);
@@ -145,7 +145,7 @@
             // 
             // btnZoomIn
             // 
-            this.btnZoomIn.Image = global::KaiwaProjects.Properties.Resources.btnZoomIn;
+            this.btnZoomIn.Image = global::Savan.Properties.Resources.btnZoomIn;
             this.btnZoomIn.Location = new System.Drawing.Point(2, 1);
             this.btnZoomIn.Name = "btnZoomIn";
             this.btnZoomIn.Size = new System.Drawing.Size(25, 25);
@@ -155,7 +155,7 @@
             // 
             // btnZoomOut
             // 
-            this.btnZoomOut.Image = global::KaiwaProjects.Properties.Resources.btnZoomOut;
+            this.btnZoomOut.Image = global::Savan.Properties.Resources.btnZoomOut;
             this.btnZoomOut.Location = new System.Drawing.Point(30, 1);
             this.btnZoomOut.Name = "btnZoomOut";
             this.btnZoomOut.Size = new System.Drawing.Size(25, 25);
@@ -165,7 +165,7 @@
             // 
             // btnRotate270
             // 
-            this.btnRotate270.Image = global::KaiwaProjects.Properties.Resources.btnRotate270;
+            this.btnRotate270.Image = global::Savan.Properties.Resources.btnRotate270;
             this.btnRotate270.Location = new System.Drawing.Point(86, 1);
             this.btnRotate270.Name = "btnRotate270";
             this.btnRotate270.Size = new System.Drawing.Size(25, 25);
@@ -175,7 +175,7 @@
             // 
             // btnRotate90
             // 
-            this.btnRotate90.Image = global::KaiwaProjects.Properties.Resources.btnRotate90;
+            this.btnRotate90.Image = global::Savan.Properties.Resources.btnRotate90;
             this.btnRotate90.Location = new System.Drawing.Point(114, 1);
             this.btnRotate90.Name = "btnRotate90";
             this.btnRotate90.Size = new System.Drawing.Size(25, 25);
@@ -185,7 +185,7 @@
             // 
             // btnOpen
             // 
-            this.btnOpen.Image = global::KaiwaProjects.Properties.Resources.btnOpen;
+            this.btnOpen.Image = global::Savan.Properties.Resources.btnOpen;
             this.btnOpen.Location = new System.Drawing.Point(170, 1);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(25, 25);
@@ -232,7 +232,7 @@
             // 
             // btnBack
             // 
-            this.btnBack.Image = global::KaiwaProjects.Properties.Resources.btnBack;
+            this.btnBack.Image = global::Savan.Properties.Resources.btnBack;
             this.btnBack.Location = new System.Drawing.Point(93, 1);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(25, 25);
@@ -242,7 +242,7 @@
             // 
             // btnNext
             // 
-            this.btnNext.Image = global::KaiwaProjects.Properties.Resources.btnNext;
+            this.btnNext.Image = global::Savan.Properties.Resources.btnNext;
             this.btnNext.Location = new System.Drawing.Point(121, 1);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(25, 25);
@@ -329,7 +329,7 @@
             this.Controls.Add(this.pbPanel);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.MinimumSize = new System.Drawing.Size(454, 157);
-            this.Name = "KpImageViewer";
+            this.Name = "ImageViewer";
             this.Size = new System.Drawing.Size(454, 310);
             this.Load += new System.EventHandler(this.KP_ImageViewerV2_Load);
             this.Click += new System.EventHandler(this.KpImageViewer_Click);

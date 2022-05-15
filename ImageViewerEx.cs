@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace KaiwaProjects
+namespace Savan
 {
     public enum KpZoom
     {
@@ -13,13 +13,13 @@ namespace KaiwaProjects
         ZoomOut
     }
 
-    public partial class KpImageViewer : UserControl
+    public partial class ImageViewer : UserControl
     {
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern short GetKeyState(int key);
 
         private KP_DrawEngine drawEngine;
-        private KP_DrawObject drawing;
+        private DrawObject drawing;
         private Bitmap preview;
 
         private bool isScrolling = false;
@@ -456,11 +456,11 @@ namespace KaiwaProjects
             }
         }
 
-        public KpImageViewer()
+        public ImageViewer()
         {
             // DrawEngine & DrawObject initiralization
             drawEngine = new KP_DrawEngine();
-            drawing = new KP_DrawObject(this);
+            drawing = new DrawObject(this);
 
             // Stream to initialize the cursors.
             Stream imgStream = null;
@@ -469,14 +469,14 @@ namespace KaiwaProjects
             {
                 Assembly a = Assembly.GetExecutingAssembly();
 
-                imgStream = a.GetManifestResourceStream("KaiwaProjects.Resources.Grab.cur");
+                imgStream = a.GetManifestResourceStream("Savan.Resources.Grab.cur");
                 if (imgStream != null)
                 {
                     grabCursor = new Cursor(imgStream);
                     imgStream = null;
                 }
 
-                imgStream = a.GetManifestResourceStream("KaiwaProjects.Resources.Drag.cur");
+                imgStream = a.GetManifestResourceStream("Savan.Resources.Drag.cur");
                 if (imgStream != null)
                 {
                     dragCursor = new Cursor(imgStream);
@@ -1326,12 +1326,12 @@ namespace KaiwaProjects
             if (selectMode == false)
             {
                 selectMode = true;
-                this.btnMode.Image = KaiwaProjects.Properties.Resources.btnDrag;
+                this.btnMode.Image = Savan.Properties.Resources.btnDrag;
             }
             else
             {
                 selectMode = false;
-                this.btnMode.Image = KaiwaProjects.Properties.Resources.btnSelect;
+                this.btnMode.Image = Savan.Properties.Resources.btnSelect;
             }
         }
 

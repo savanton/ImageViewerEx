@@ -4,11 +4,11 @@ using System.IO;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 
-namespace KaiwaProjects
+namespace Savan
 {
-    public class KP_DrawObject
+    public class DrawObject
     {
-        private KpImageViewer KpViewer;
+        private ImageViewer imageViewer;
         private	Rectangle boundingRect;
 		private	Point dragPoint;
 		private	bool dragging;
@@ -22,14 +22,14 @@ namespace KaiwaProjects
         {
             get
             {
-                return KpViewer.PanelWidth;
+                return imageViewer.PanelWidth;
             }
         }
         private int panelHeight
         {
             get
             {
-                return KpViewer.PanelHeight;
+                return imageViewer.PanelHeight;
             }
         }
         private int rotation = 0;
@@ -286,7 +286,7 @@ namespace KaiwaProjects
 
                         if (multiFrame == true)
                         {
-                            this.gifBmp = new GifImage(this.KpViewer, value, this.KpViewer.GifAnimation, this.KpViewer.GifFPS);
+                            this.gifBmp = new GifImage(this.imageViewer, value, this.imageViewer.GifAnimation, this.imageViewer.GifFPS);
                         }
                         else if (multiPage == true)
                         {
@@ -421,7 +421,7 @@ namespace KaiwaProjects
 
                         if (multiFrame == true)
                         {
-                            this.gifBmp = new GifImage(this.KpViewer, temp, this.KpViewer.GifAnimation, this.KpViewer.GifFPS);
+                            this.gifBmp = new GifImage(this.imageViewer, temp, this.imageViewer.GifAnimation, this.imageViewer.GifFPS);
                         }
                         else if (multiPage == true)
                         {
@@ -476,11 +476,11 @@ namespace KaiwaProjects
             }
         }
 
-        public KP_DrawObject(KpImageViewer KpViewer, Bitmap bmp)
+        public DrawObject(ImageViewer KpViewer, Bitmap bmp)
         {
             try
             {
-                this.KpViewer = KpViewer;
+                this.imageViewer = KpViewer;
 
                 // Initial dragging to false and an Image.
                 dragging = false;
@@ -609,11 +609,11 @@ namespace KaiwaProjects
             }
         }
 
-        public KP_DrawObject(KpImageViewer KpViewer)
+        public DrawObject(ImageViewer KpViewer)
         {
             try
             {
-                this.KpViewer = KpViewer;
+                this.imageViewer = KpViewer;
                 // Initial dragging to false and No image.
                 dragging = false;
                 this.bmp = null;

@@ -6,11 +6,11 @@ using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Timers;
 
-namespace KaiwaProjects
+namespace Savan
 {
     public class GifImage : IDisposable
     {
-        private KpImageViewer KpViewer;
+        private ImageViewer imageViewer;
         private Image gif;
         private FrameDimension dimension;
         private int frameCount;
@@ -73,10 +73,10 @@ namespace KaiwaProjects
             }
         }
 
-        public GifImage(KpImageViewer KpViewer, Image img, bool animation, double fps)
+        public GifImage(ImageViewer KpViewer, Image img, bool animation, double fps)
         {
             this.updating = true;
-            this.KpViewer = KpViewer;
+            this.imageViewer = KpViewer;
             this.gif = img;
             this.dimension = new FrameDimension(gif.FrameDimensionsList[0]);
             this.frameCount = gif.GetFrameCount(dimension);
@@ -168,7 +168,7 @@ namespace KaiwaProjects
             this.currentFrameBmp = (Bitmap)gif;
             this.currentFrameSize = new Size(currentFrameBmp.Size.Width, currentFrameBmp.Size.Height);
 
-            this.KpViewer.InvalidatePanel();
+            this.imageViewer.InvalidatePanel();
         }
 
         public Bitmap CurrentFrame

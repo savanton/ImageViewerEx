@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,9 +8,9 @@
     <ProjectGuid>{68D11DDD-0081-4037-99D4-69B3AFCBDD8D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KaiwaProjects</RootNamespace>
-    <AssemblyName>KP-ImageViewerV2</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <RootNamespace>Savan</RootNamespace>
+    <AssemblyName>ImageViewerEx</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,13 +61,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GifImage.cs" />
-    <Compile Include="KP-DrawEngine.cs" />
-    <Compile Include="KP-DrawObject.cs" />
-    <Compile Include="KP-ImageViewerV2.cs">
+    <Compile Include="DrawEngine.cs" />
+    <Compile Include="DrawObject.cs" />
+    <Compile Include="ImageViewerEx.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="KP-ImageViewerV2.Designer.cs">
-      <DependentUpon>KP-ImageViewerV2.cs</DependentUpon>
+    <Compile Include="ImageViewerEx.Designer.cs">
+      <DependentUpon>ImageViewerEx.cs</DependentUpon>
     </Compile>
     <Compile Include="MultiPageImage.cs" />
     <Compile Include="PanelDoubleBuffered.cs">
@@ -79,8 +82,8 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="KP-ImageViewerV2.resx">
-      <DependentUpon>KP-ImageViewerV2.cs</DependentUpon>
+    <EmbeddedResource Include="ImageViewerEx.resx">
+      <DependentUpon>ImageViewerEx.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

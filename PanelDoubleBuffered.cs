@@ -1,4 +1,4 @@
-﻿namespace KaiwaProjects
+﻿namespace Savan
 {
     public class PanelDoubleBuffered : System.Windows.Forms.Panel
     {
