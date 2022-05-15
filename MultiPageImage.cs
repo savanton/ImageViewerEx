@@ -10,23 +10,17 @@ namespace Savan
     {
         public MultiPageImage(Bitmap image)
         {
-            this.Image = image;
-
-            this.currentPage = 0;
+            Image = image;
+            currentPage = 0;
         }
+        public int Rotation { get; private set; }
 
-        private int rotation = 0;
-        public int Rotation
-        {
-            get { return rotation; }
-        }
-
-        private int currentPage = 0;
+        private int currentPage;
 
         private Bitmap image;
         public Bitmap Image
         {
-            get { return bmp; }
+            get => bmp;
             set
             {
                 if (image != null)
@@ -49,53 +43,47 @@ namespace Savan
 
         private Bitmap bmp;
 
-        public Bitmap Page
-        {
-            get
-            {
-                if (bmp == null)
-                {
-                    bmp = new Bitmap(image);
-                }
-
-                return bmp;
-            }
-        }
+        public Bitmap Page => bmp ?? (bmp = new Bitmap(image));
 
         public void Rotate(int rotation)
         {
-            if (rotation == 90 || rotation == 180 || rotation == 270 || rotation == 0)
-            {
-                this.rotation = rotation;
+            if (rotation != 90 && rotation != 180 && rotation != 270 && rotation != 0) return;
 
-                if (this.rotation == 90) { bmp.RotateFlip(RotateFlipType.Rotate90FlipNone); }
-                else if (this.rotation == 180) { bmp.RotateFlip(RotateFlipType.Rotate180FlipNone); }
-                else if (this.rotation == 270) { bmp.RotateFlip(RotateFlipType.Rotate270FlipNone); }
+            Rotation = rotation;
+
+            switch (this.Rotation)
+            {
+                case 90:
+                    bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    break;
+                case 180:
+                    bmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    break;
+                case 270:
+                    bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    break;
             }
         }
 
         public void SetPage(int pageNumber)
         {
-            if (image != null)
+            if (image == null) return;
+            if (currentPage == pageNumber) return;
+
+            int pages = image.GetFrameCount(FrameDimension.Page);
+            if (pages > pageNumber && pageNumber >= 0)
             {
-                if (currentPage != pageNumber)
+                currentPage = pageNumber;
+
+                image.SelectActiveFrame(FrameDimension.Page, pageNumber);
+
+                if (bmp != null)
                 {
-                    int pages = image.GetFrameCount(System.Drawing.Imaging.FrameDimension.Page);
-                    if (pages > pageNumber && pageNumber >= 0)
-                    {
-                        currentPage = pageNumber;
-
-                        image.SelectActiveFrame(System.Drawing.Imaging.FrameDimension.Page, pageNumber);
-
-                        if (bmp != null)
-                        {
-                            bmp.Dispose();
-                            bmp = null;
-                        }
-
-                        bmp = new Bitmap(image);
-                    }
+                    bmp.Dispose();
+                    bmp = null;
                 }
+
+                bmp = new Bitmap(image);
             }
         }
 
@@ -108,12 +96,12 @@ namespace Savan
             
             if (currentPage != pageNumber)
             {
-                int pages = image.GetFrameCount(System.Drawing.Imaging.FrameDimension.Page);
+                int pages = image.GetFrameCount(FrameDimension.Page);
                 if (pages > pageNumber && pageNumber >= 0)
                 {
                     currentPage = pageNumber;
 
-                    image.SelectActiveFrame(System.Drawing.Imaging.FrameDimension.Page, pageNumber);
+                    image.SelectActiveFrame(FrameDimension.Page, pageNumber);
 
                     if (bmp != null)
                     {
@@ -130,17 +118,11 @@ namespace Savan
 
         public void Dispose()
         {
-            if (this.Image != null)
-            {
-                this.image.Dispose();
-                this.image = null;
-            }
+            image?.Dispose();
+            image = null;
 
-            if (this.bmp != null)
-            {
-                this.bmp.Dispose();
-                this.bmp = null;
-            }
+            bmp?.Dispose();
+            bmp = null;
         }
     }
 }

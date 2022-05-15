@@ -13,23 +13,13 @@ namespace Savan
         private ImageViewer imageViewer;
         private Image gif;
         private FrameDimension dimension;
-        private int frameCount;
-        private int rotation = 0;
-        private int currentFrame = 0;
-        private Bitmap currentFrameBmp = null;
-        private Size currentFrameSize = new Size();
-        private bool updating = false;
-        private Timer timer = null;
-        private double framesPerSecond = 0;
-        private bool animationEnabled = true;
+        private int currentFrame;
+        private bool updating;
+        private Timer timer;
+        private double framesPerSecond;
+        private bool animationEnabled;
 
-        public Size CurrentFrameSize
-        {
-            get
-            {
-                return currentFrameSize;
-            }
-        }
+        public Size CurrentFrameSize { get; private set; }
 
         public void Dispose()
         {
@@ -44,7 +34,7 @@ namespace Savan
 
         public double FPS
         {
-            get { return (1000.0 / framesPerSecond); }
+            get => (1000.0 / framesPerSecond);
             set
             {
                 if (value <= 30.0 && value > 0.0)
@@ -61,7 +51,7 @@ namespace Savan
 
         public bool AnimationEnabled
         {
-            get { return animationEnabled; }
+            get => animationEnabled;
             set
             {
                 animationEnabled = value;
@@ -73,13 +63,13 @@ namespace Savan
             }
         }
 
-        public GifImage(ImageViewer KpViewer, Image img, bool animation, double fps)
+        public GifImage(ImageViewer viewer, Image img, bool animation, double fps)
         {
             this.updating = true;
-            this.imageViewer = KpViewer;
+            this.imageViewer = viewer;
             this.gif = img;
             this.dimension = new FrameDimension(gif.FrameDimensionsList[0]);
-            this.frameCount = gif.GetFrameCount(dimension);
+            this.FrameCount = gif.GetFrameCount(dimension);
             this.gif.SelectActiveFrame(dimension, 0);
             this.currentFrame = 0;
             this.animationEnabled = animation;
@@ -89,12 +79,12 @@ namespace Savan
             this.updating = false;
 
             framesPerSecond = 1000.0 / fps; // 15 FPS
-            this.timer.Enabled = this.animationEnabled;
+            this.timer.Enabled = animationEnabled;
             this.timer.Interval = framesPerSecond;
-            this.timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            this.timer.Elapsed += timer_Elapsed;
 
-            this.currentFrameBmp = (Bitmap)gif;
-            this.currentFrameSize = new Size(currentFrameBmp.Size.Width, currentFrameBmp.Size.Height);
+            this.CurrentFrame = (Bitmap)gif;
+            this.CurrentFrameSize = new Size(CurrentFrame.Size.Width, CurrentFrame.Size.Height);
         }
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -135,7 +125,7 @@ namespace Savan
                             gif.SelectActiveFrame(this.dimension, this.currentFrame);
                             currentFrame++;
 
-                            if (currentFrame >= this.frameCount)
+                            if (currentFrame >= this.FrameCount)
                             {
                                 currentFrame = 0;
                             }
@@ -153,35 +143,23 @@ namespace Savan
             }
         }
 
-        public int Rotation
-        {
-            get { return rotation; }
-        }
+        public int Rotation { get; private set; }
 
         public void Rotate(int rotation)
         {
-            this.rotation = (this.rotation + rotation) % 360;
+            Rotation = (Rotation + rotation) % 360;
         }
 
         private void OnFrameChanged()
         {
-            this.currentFrameBmp = (Bitmap)gif;
-            this.currentFrameSize = new Size(currentFrameBmp.Size.Width, currentFrameBmp.Size.Height);
+            CurrentFrame = (Bitmap)gif;
+            CurrentFrameSize = new Size(CurrentFrame.Size.Width, CurrentFrame.Size.Height);
 
-            this.imageViewer.InvalidatePanel();
+            imageViewer.InvalidatePanel();
         }
 
-        public Bitmap CurrentFrame
-        {
-            get
-            {
-                return currentFrameBmp;
-            }
-        }
+        public Bitmap CurrentFrame { get; private set; }
 
-        public int FrameCount
-        {
-            get { return frameCount; }
-        }
+        public int FrameCount { get; }
     }
 }

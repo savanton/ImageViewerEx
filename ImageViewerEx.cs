@@ -18,84 +18,52 @@ namespace Savan
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern short GetKeyState(int key);
 
-        private KP_DrawEngine drawEngine;
+        private DrawEngine drawEngine;
         private DrawObject drawing;
         private Bitmap preview;
 
-        private bool isScrolling = false;
-        private bool scrollbars = false;
+        private bool isScrolling;
+        private bool scrollbars;
         private double fps = 15.0;
-        private bool animationEnabled = false;
-        private bool selectMode = false;
-        private bool shiftSelecting = false;
-        private Point ptSelectionStart = new Point();
-        private Point ptSelectionEnd = new Point();
+        private bool animationEnabled;
+        private bool selectMode;
+        private bool shiftSelecting;
+        private Point ptSelectionStart;
+        private Point ptSelectionEnd;
 
-        private bool panelDragging = false;
+        private bool panelDragging;
         private bool showPreview = true;
-        private Cursor grabCursor = null;
-        private Cursor dragCursor = null;
+        private Cursor grabCursor;
+        private Cursor dragCursor;
 
         public delegate void ImageViewerRotationEventHandler(object sender, ImageViewerRotationEventArgs e);
         public event ImageViewerRotationEventHandler AfterRotation;
 
         protected virtual void OnRotation(ImageViewerRotationEventArgs e)
         {
-            if (AfterRotation != null)
-            {
-                AfterRotation(this, e);
-            }
+            AfterRotation?.Invoke(this, e);
         }
 
-        public int PanelWidth
-        {
-            get
-            {
-                if (pbFull != null)
-                {
-                    return pbFull.Width;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
+        public int PanelWidth => pbFull.Width;
 
-        public int PanelHeight
-        {
-            get
-            {
-                if (pbFull != null)
-                {
-                    return pbFull.Height;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
+        public int PanelHeight => pbFull.Height;
 
         public delegate void ImageViewerZoomEventHandler(object sender, ImageViewerZoomEventArgs e);
         public event ImageViewerZoomEventHandler AfterZoom;
 
         protected virtual void OnZoom(ImageViewerZoomEventArgs e)
         {
-            if (AfterZoom != null)
-            {
-                AfterZoom(this, e);
-            }
+            AfterZoom?.Invoke(this, e);
         }
 
         public void InvalidatePanel()
         {
-            this.pbFull.Invalidate();
+            pbFull.Invalidate();
         }
 
         public bool Scrollbars
         {
-            get { return scrollbars; }
+            get => scrollbars;
             set
             {
                 scrollbars = value;
@@ -106,18 +74,15 @@ namespace Savan
 
         public double GifFPS
         {
-            get
-            {
-                return fps;
-            }
+            get => fps;
             set
             {
                 if (value <= 30.0 && value > 0.0)
                 {
                     fps = value;
-                    if (this.drawing.Gif != null)
+                    if (drawing.Gif != null)
                     {
-                        this.drawing.Gif.FPS = fps;
+                        drawing.Gif.FPS = fps;
                     }
                 }
             }
@@ -125,24 +90,21 @@ namespace Savan
 
         public bool GifAnimation
         {
-            get 
-            {
-                return animationEnabled;
-            }
+            get => animationEnabled;
             set
             {
                 animationEnabled = value;
-                if (this.drawing.Gif != null)
+                if (drawing.Gif != null)
                 {
-                    this.drawing.Gif.AnimationEnabled = animationEnabled;
+                    drawing.Gif.AnimationEnabled = animationEnabled;
                 }
             }
         }
 
         private bool IsKeyPressed(int key)
         {
-            bool keyPressed = false;
-            short result = GetKeyState(key);
+            var keyPressed = false;
+            var result = GetKeyState(key);
 
             switch (result)
             {
@@ -167,38 +129,18 @@ namespace Savan
 
         public bool OpenButton
         {
-            get { return btnOpen.Visible; }
+            get => btnOpen.Visible;
             set
             {
                 if (value)
                 {
                     btnOpen.Show();
-
-                    if (btnOpen.Visible == true)
-                    {
-                        // Making sure it's aligned properly
-                        btnPreview.Location = new Point(198, btnPreview.Location.Y);
-                    }
-                    else
-                    {
-                        // Making sure it's aligned properly
-                        btnPreview.Location = new Point(btnOpen.Location.X, btnPreview.Location.Y);
-                    }
+                    btnPreview.Location = btnOpen.Visible == true ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
                 }
                 else
                 {
                     btnOpen.Hide();
-
-                    if (btnOpen.Visible == true)
-                    {
-                        // Making sure it's aligned properly
-                        btnPreview.Location = new Point(198, btnPreview.Location.Y);
-                    }
-                    else
-                    {
-                        // Making sure it's aligned properly
-                        btnPreview.Location = new Point(btnOpen.Location.X, btnPreview.Location.Y);
-                    }
+                    btnPreview.Location = btnOpen.Visible == true ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
                 }
             }
         }
@@ -206,22 +148,12 @@ namespace Savan
 
         public bool PreviewButton
         {
-            get { return btnPreview.Visible; }
+            get => btnPreview.Visible;
             set
             {
                 if (value)
                 {
-                    if (btnOpen.Visible == true)
-                    {
-                        // Making sure it's aligned properly
-                        btnPreview.Location = new Point(198, btnPreview.Location.Y);
-                    }
-                    else
-                    {
-                        // Making sure it's aligned properly
-                        btnPreview.Location = new Point(btnOpen.Location.X, btnPreview.Location.Y);
-                    }
-
+                    btnPreview.Location = btnOpen.Visible == true ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
                     btnPreview.Show();
                 }
                 else
@@ -233,26 +165,23 @@ namespace Savan
 
         public override bool AllowDrop
         {
-            get
-            {
-                return base.AllowDrop;
-            }
+            get => base.AllowDrop;
             set
             {
-                this.pbFull.AllowDrop = value;
+                pbFull.AllowDrop = value;
                 base.AllowDrop = value;
             }
         }
 
         public double Zoom
         {
-            get { return Math.Round(drawing.Zoom * 100, 0); }
+            get => Math.Round(drawing.Zoom * 100, 0);
             set
             {
                 if (value > 0)
                 {
                     // Make it a double!
-                    double zoomDouble = (double)value / (double)100;
+                    var zoomDouble = (double)value / (double)100;
 
                     drawing.SetZoom(zoomDouble);
                     UpdatePanels(true);
@@ -262,19 +191,13 @@ namespace Savan
             }
         }
 
-        public Size OriginalSize
-        {
-            get { return drawing.OriginalSize; }
-        }
+        public Size OriginalSize => drawing.OriginalSize;
 
-        public Size CurrentSize
-        {
-            get { return drawing.CurrentSize; }
-        }
+        public Size CurrentSize => drawing.CurrentSize;
 
         public Color MenuColor
         {
-            get { return panelMenu.BackColor; }
+            get => panelMenu.BackColor;
             set
             {
                 panelMenu.BackColor = value;
@@ -285,40 +208,31 @@ namespace Savan
 
         public Color MenuPanelColor
         {
-            get { return panelMenu.BackColor; }
-            set
-            {
-                panelMenu.BackColor = value;
-            }
+            get => panelMenu.BackColor;
+            set => panelMenu.BackColor = value;
         }
 
         public Color NavigationPanelColor
         {
-            get { return panelNavigation.BackColor; }
-            set
-            {
-                panelNavigation.BackColor = value;
-            }
+            get => panelNavigation.BackColor;
+            set => panelNavigation.BackColor = value;
         }
 
         public Color PreviewPanelColor
         {
-            get { return panelPreview.BackColor; }
-            set
-            {
-                panelPreview.BackColor = value;
-            }
+            get => panelPreview.BackColor;
+            set => panelPreview.BackColor = value;
         }
 
         public Color NavigationTextColor
         {
-            get { return lblNavigation.ForeColor; }
-            set { lblNavigation.ForeColor = value; }
+            get => lblNavigation.ForeColor;
+            set => lblNavigation.ForeColor = value;
         }
 
         public Color TextColor
         {
-            get { return lblPreview.ForeColor; }
+            get => lblPreview.ForeColor;
             set
             {
                 lblPreview.ForeColor = value;
@@ -328,20 +242,20 @@ namespace Savan
 
         public Color PreviewTextColor
         {
-            get { return lblPreview.ForeColor; }
-            set { lblPreview.ForeColor = value; }
+            get => lblPreview.ForeColor;
+            set => lblPreview.ForeColor = value;
         }
 
         public Color BackgroundColor
         {
-            get { return pbFull.BackColor; }
-            set { pbFull.BackColor = value; }
+            get => pbFull.BackColor;
+            set => pbFull.BackColor = value;
         }
 
         public string PreviewText
         {
-            get { return lblPreview.Text; }
-            set { lblPreview.Text = value; }
+            get => lblPreview.Text;
+            set => lblPreview.Text = value;
         }
 
         public string ImagePath
@@ -361,10 +275,7 @@ namespace Savan
 
         public Bitmap Image
         {
-            get
-            {
-                return drawing.Image;
-            }
+            get => drawing.Image;
             set
             {
                 drawing.Image = value;
@@ -380,7 +291,7 @@ namespace Savan
 
         public int Rotation
         {
-            get { return drawing.Rotation; }
+            get => drawing.Rotation;
             set
             {
                 // Making sure the rotation is 0, 90, 180 or 270 degrees!
@@ -445,7 +356,7 @@ namespace Savan
 
         public bool ShowPreview
         {
-            get { return showPreview; }
+            get => showPreview;
             set
             {
                 if (showPreview != value)
@@ -459,28 +370,28 @@ namespace Savan
         public ImageViewer()
         {
             // DrawEngine & DrawObject initiralization
-            drawEngine = new KP_DrawEngine();
+            drawEngine = new DrawEngine();
             drawing = new DrawObject(this);
-
-            // Stream to initialize the cursors.
-            Stream imgStream = null;
 
             try
             {
-                Assembly a = Assembly.GetExecutingAssembly();
+                var a = Assembly.GetExecutingAssembly();
 
-                imgStream = a.GetManifestResourceStream("Savan.Resources.Grab.cur");
-                if (imgStream != null)
+                // Stream to initialize the cursors.
+                using (var imgStream = a.GetManifestResourceStream("Savan.Resources.Grab.cur"))
                 {
-                    grabCursor = new Cursor(imgStream);
-                    imgStream = null;
+                    if (imgStream != null)
+                    {
+                        grabCursor = new Cursor(imgStream);
+                    }
                 }
 
-                imgStream = a.GetManifestResourceStream("Savan.Resources.Drag.cur");
-                if (imgStream != null)
+                using (var imgStream = a.GetManifestResourceStream("Savan.Resources.Drag.cur"))
                 {
-                    dragCursor = new Cursor(imgStream);
-                    imgStream = null;
+                    if (imgStream != null)
+                    {
+                        dragCursor = new Cursor(imgStream);
+                    }
                 }
             }
             catch
@@ -498,20 +409,9 @@ namespace Savan
         private void DisposeControl()
         {
             // No memory leaks here
-            if (drawing != null)
-            {
-                drawing.Dispose();
-            }
-
-            if (drawEngine != null)
-            {
-                drawEngine.Dispose();
-            }
-
-            if (preview != null)
-            {
-                preview.Dispose();
-            }
+            drawing?.Dispose();
+            drawEngine?.Dispose();
+            preview?.Dispose();
         }
 
         public void InitControl()
@@ -647,7 +547,7 @@ namespace Savan
             }
         }
 
-        private void KP_ImageViewerV2_Load(object sender, EventArgs e)
+        private void ImageViewerEx_Load(object sender, EventArgs e)
         {
             // Loop for ComboBox Items! Increments by 25%
             for (double z = 0.25; z <= 4.0; z = z + 0.25)
@@ -698,7 +598,7 @@ namespace Savan
             }
         }
 
-        private void KP_ImageViewerV2_Resize(object sender, EventArgs e)
+        private void ImageViewerEx_Resize(object sender, EventArgs e)
         {
             InitControl();
             drawing.AvoidOutOfScreen();
@@ -711,10 +611,10 @@ namespace Savan
             if (drawEngine.CanDoubleBuffer())
             {
                 // Yes I can!
-                drawEngine.g.FillRectangle(new SolidBrush(pbFull.BackColor), e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
+                drawEngine.Graphics.FillRectangle(new SolidBrush(pbFull.BackColor), e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
 
                 // Drawing to backBuffer
-                drawing.Draw(drawEngine.g);
+                drawing.Draw(drawEngine.Graphics);
 
                 // Drawing to Panel
                 drawEngine.Render(e.Graphics);
@@ -848,7 +748,7 @@ namespace Savan
             }
         }
 
-        private void KP_ImageViewerV2_MouseWheel(object sender, MouseEventArgs e)
+        private void ImageViewerEx_MouseWheel(object sender, MouseEventArgs e)
         {
             drawing.Scroll(sender, e);
 
@@ -1127,7 +1027,7 @@ namespace Savan
             }
         }
 
-        private void KpImageViewer_Click(object sender, EventArgs e)
+        private void ImageViewerEx_Click(object sender, EventArgs e)
         {
             FocusOnMe();
         }
@@ -1443,22 +1343,13 @@ namespace Savan
 
     public class ImageViewerZoomEventArgs : EventArgs
     {
-        private int zoom;
-        public int Zoom
-        {
-            get { return zoom; }
-        }
-
-        private KpZoom inOut;
-        public KpZoom InOut
-        {
-            get { return inOut; }
-        }
+        public int Zoom { get; }
+        public KpZoom InOut { get; }
 
         public ImageViewerZoomEventArgs(double zoom, KpZoom inOut)
         {
-            this.zoom = Convert.ToInt32(Math.Round((zoom * 100), 0));
-            this.inOut = inOut;
+            this.Zoom = Convert.ToInt32(Math.Round((zoom * 100), 0));
+            this.InOut = inOut;
         }
     }
 }

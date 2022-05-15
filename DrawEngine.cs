@@ -3,8 +3,8 @@ using System;
 
 namespace Savan
 {
-    class KP_DrawEngine
-    {        	
+    class DrawEngine
+    {
         /// <summary>
         /// Original class to implement Double Buffering by
         /// NT Almond 
@@ -14,25 +14,17 @@ namespace Savan
         /// Jordy "Kaiwa" Ruiter
         /// </summary>
         /// 
-		private	Graphics graphics;
-		private Bitmap memoryBitmap;
+        private Bitmap memoryBitmap;
 		private	int	width;
 		private	int	height;
 
         public void Dispose()
         {
-            if (graphics != null)
-            {
-                graphics.Dispose();
-            }
-
-            if (memoryBitmap != null)
-            {
-                memoryBitmap.Dispose();
-            }
+            Graphics?.Dispose();
+            memoryBitmap?.Dispose();
         }
 
-        public KP_DrawEngine()
+        public DrawEngine()
 		{
             try
             {
@@ -55,10 +47,10 @@ namespace Savan
                     memoryBitmap = null;
                 }
 
-                if (graphics != null)
+                if (this.Graphics != null)
                 {
-                    graphics.Dispose();
-                    graphics = null;
+                    this.Graphics.Dispose();
+                    this.Graphics = null;
                 }
 
                 if (width == 0 || height == 0)
@@ -68,7 +60,7 @@ namespace Savan
                 this.height = height;
 
                 memoryBitmap = new Bitmap(width, height);
-                graphics = Graphics.FromImage(memoryBitmap);
+                this.Graphics = Graphics.FromImage(memoryBitmap);
 
                 return true;
             }
@@ -98,7 +90,7 @@ namespace Savan
 		{
             try
             {
-                return graphics != null;
+                return Graphics != null;
             }
             catch (Exception ex)
             {
@@ -107,12 +99,6 @@ namespace Savan
             }
 		}
 
-		public Graphics g 
-		{
-			get 
-			{ 
-				return graphics; 
-			}
-		}
+        public Graphics Graphics { get; private set; }
     }
 }

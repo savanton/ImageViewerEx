@@ -609,11 +609,11 @@ namespace Savan
             }
         }
 
-        public DrawObject(ImageViewer KpViewer)
+        public DrawObject(ImageViewer viewer)
         {
             try
             {
-                this.imageViewer = KpViewer;
+                this.imageViewer = viewer;
                 // Initial dragging to false and No image.
                 dragging = false;
                 this.bmp = null;

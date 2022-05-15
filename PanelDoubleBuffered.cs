@@ -4,8 +4,8 @@
     {
         public PanelDoubleBuffered()
         {
-            this.DoubleBuffered = true;
-            this.UpdateStyles();
+            DoubleBuffered = true;
+            UpdateStyles();
         }
     }
 }

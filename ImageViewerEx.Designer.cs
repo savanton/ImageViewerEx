@@ -331,10 +331,10 @@
             this.MinimumSize = new System.Drawing.Size(454, 157);
             this.Name = "ImageViewer";
             this.Size = new System.Drawing.Size(454, 310);
-            this.Load += new System.EventHandler(this.KP_ImageViewerV2_Load);
-            this.Click += new System.EventHandler(this.KpImageViewer_Click);
-            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.KP_ImageViewerV2_MouseWheel);
-            this.Resize += new System.EventHandler(this.KP_ImageViewerV2_Resize);
+            this.Load += new System.EventHandler(this.ImageViewerEx_Load);
+            this.Click += new System.EventHandler(this.ImageViewerEx_Click);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.ImageViewerEx_MouseWheel);
+            this.Resize += new System.EventHandler(this.ImageViewerEx_Resize);
             this.panelPreview.ResumeLayout(false);
             this.panelPreview.PerformLayout();
             this.panelMenu.ResumeLayout(false);
