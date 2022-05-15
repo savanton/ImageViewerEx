@@ -18,7 +18,6 @@ namespace Savan
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         static extern short GetKeyState(int key);
 
-        private DrawEngine drawEngine;
         private DrawObject drawing;
         private Bitmap preview;
 
@@ -369,8 +368,7 @@ namespace Savan
 
         public ImageViewer()
         {
-            // DrawEngine & DrawObject initiralization
-            drawEngine = new DrawEngine();
+            // DrawObject initialization
             drawing = new DrawObject(this);
 
             try
@@ -410,15 +408,11 @@ namespace Savan
         {
             // No memory leaks here
             drawing?.Dispose();
-            drawEngine?.Dispose();
             preview?.Dispose();
         }
 
         public void InitControl()
         {
-            // Make sure panel is DoubleBuffering
-            drawEngine.CreateDoubleBuffer(pbFull.CreateGraphics(), pbFull.Size.Width, pbFull.Size.Height);
-
             if (!scrollbars)
             {
                 sbHoriz.Visible = false;
@@ -607,18 +601,8 @@ namespace Savan
 
         private void pbFull_Paint(object sender, PaintEventArgs e)
         {
-            // Can I double buffer?
-            if (drawEngine.CanDoubleBuffer())
-            {
-                // Yes I can!
-                drawEngine.Graphics.FillRectangle(new SolidBrush(pbFull.BackColor), e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
-
-                // Drawing to backBuffer
-                drawing.Draw(drawEngine.Graphics);
-
-                // Drawing to Panel
-                drawEngine.Render(e.Graphics);
-            }
+            e.Graphics.FillRectangle(new SolidBrush(pbFull.BackColor), e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
+            drawing.Draw(e.Graphics);
         }
 
         private void pbFull_MouseDown(object sender, MouseEventArgs e)
@@ -633,7 +617,7 @@ namespace Savan
 
                     shiftSelecting = true;
 
-                    // Initial seleciton
+                    // Initial selection
                     ptSelectionStart.X = e.X;
                     ptSelectionStart.Y = e.Y;
 
@@ -790,7 +774,7 @@ namespace Savan
         {
             if (drawing != null)
             {
-                drawing.Rotate270();
+                drawing.Rotate(RotateFlipType.Rotate270FlipNone);
 
                 // AfterRotation Event
                 OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
@@ -803,7 +787,7 @@ namespace Savan
         {
             if (drawing != null)
             {
-                drawing.Rotate90();
+                drawing.Rotate(RotateFlipType.Rotate90FlipNone);
 
                 // AfterRotation Event
                 OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
@@ -816,7 +800,7 @@ namespace Savan
         {
             if (drawing != null)
             {
-                drawing.Rotate90();
+                drawing.Rotate(RotateFlipType.Rotate90FlipNone);
 
                 // AfterRotation Event
                 OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
@@ -829,7 +813,7 @@ namespace Savan
         {
             if (drawing != null)
             {
-                drawing.Rotate180();
+                drawing.Rotate(RotateFlipType.Rotate180FlipNone);
 
                 // AfterRotation Event
                 OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
@@ -842,7 +826,7 @@ namespace Savan
         {
             if (drawing != null)
             {
-                drawing.Rotate270();
+                drawing.Rotate(RotateFlipType.Rotate270FlipNone);
 
                 // AfterRotation Event
                 OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
