@@ -13,8 +13,8 @@ namespace Savan
         #region Fields
 
         private ImageViewerEx _imageViewer;
-        private	Rectangle _boundingRect;
-		private	Point _dragPoint;
+        private Rectangle _boundingRect;
+        private Point _dragPoint;
         private Bitmap _bmp;
         private Bitmap _bmpPreview;
         private MultiPageImage _multiBmp;
@@ -27,38 +27,24 @@ namespace Savan
 
         public DrawObject(ImageViewerEx viewer, Bitmap bmp)
         {
-            try
-            {
-                _imageViewer = viewer;
+            _imageViewer = viewer;
 
-                // Initial dragging to false and an Image.
-                IsDragging = false;
-                Image = bmp;
-                Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
+            // Initial dragging to false and an Image.
+            IsDragging = false;
+            Image = bmp;
+            Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
 
-                _boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            _boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
         }
 
         public DrawObject(ImageViewerEx viewer)
         {
-            try
-            {
-                _imageViewer = viewer;
-                // Initial dragging to false and No image.
-                IsDragging = false;
-                _bmp = null;
-                _multiBmp = null;
-                Gif = null;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            _imageViewer = viewer;
+            // Initial dragging to false and No image.
+            IsDragging = false;
+            _bmp = null;
+            _multiBmp = null;
+            Gif = null;
         }
 
         #endregion
@@ -196,106 +182,99 @@ namespace Savan
             }
             set
             {
-                try
+                if (value == null) return;
+
+                CurrentPage = 0;
+
+                // No memory leaks here!
+                _bmp?.Dispose();
+                _bmp = null;
+
+                _multiBmp?.Dispose();
+                _multiBmp = null;
+
+                Pages = 1;
+                MultiPage = false;
+                _multiFrame = false;
+
+                if (value.RawFormat.Equals(ImageFormat.Tiff))
                 {
-                    if (value == null) return;
-
-                    CurrentPage = 0;
-
-                    // No memory leaks here!
-                    _bmp?.Dispose();
-                    _bmp = null;
-
-                    _multiBmp?.Dispose();
-                    _multiBmp = null;
-
-                    Pages = 1;
-                    MultiPage = false;
-                    _multiFrame = false;
-
-                    if (value.RawFormat.Equals(ImageFormat.Tiff))
+                    try
+                    {
+                        //Gets the total number of frames in the .tiff file
+                        Pages = value.GetFrameCount(FrameDimension.Page);
+                        MultiPage = Pages > 1;
+                    }
+                    catch
+                    {
+                        MultiPage = false;
+                        Pages = 1;
+                    }
+                }
+                else if (value.RawFormat.Equals(ImageFormat.Gif))
+                {
+                    if (!MultiPage)
                     {
                         try
                         {
-                            //Gets the total number of frames in the .tiff file
-                            Pages = value.GetFrameCount(FrameDimension.Page);
-                            MultiPage = Pages > 1;
+                            var gifDimension = new FrameDimension(value.FrameDimensionsList[0]);
+                            var gifFrames = value.GetFrameCount(gifDimension);
+                            _multiFrame = gifFrames > 1;
                         }
                         catch
                         {
-                            MultiPage = false;
-                            Pages = 1;
+                            _multiFrame = false;
                         }
                     }
-                    else if (value.RawFormat.Equals(ImageFormat.Gif))
-                    {
-                        if (!MultiPage)
-                        {
-                            try
-                            {
-                                var gifDimension = new FrameDimension(value.FrameDimensionsList[0]);
-                                var gifFrames = value.GetFrameCount(gifDimension);
-                                _multiFrame = gifFrames > 1;
-                            }
-                            catch
-                            {
-                                _multiFrame = false;
-                            }
-                        }
-                    }
-
-                    if (_multiFrame)
-                    {
-                        Gif = new GifImage(_imageViewer, value, _imageViewer.GifAnimation, _imageViewer.GifFPS);
-                    }
-                    else if (MultiPage)
-                    {
-                        _bmp = null;
-                        _multiBmp = new MultiPageImage(value);
-                    }
-                    else
-                    {
-                        _bmp = value;
-                        _multiBmp = null;
-                    }
-
-                    // Initial rotation adjustments
-                    if (_rotation != 0)
-                    {
-                        if (_rotation == 180)
-                        {
-                            Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                            _boundingRect = new Rectangle(0, 0, (int)(this.ImageWidth * Zoom), (int)(this.ImageHeight * Zoom));
-                        }
-                        else
-                        {
-                            if (_rotation == 90)
-                            {
-                                Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                            }
-                            else if (_rotation == 270)
-                            {
-                                Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                            }
-
-                            // Flip the X and Y values
-                            _boundingRect = new Rectangle(0, 0, (int)(ImageHeight * Zoom), (int)(ImageWidth * Zoom));
-                        }
-                    }
-                    else
-                    {
-                        Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
-                        _boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
-                    }
-
-                    Zoom = 1.0;
-                    _bmpPreview = CreatePreviewImage();
-                    FitToScreen();
                 }
-                catch (Exception ex)
+
+                if (_multiFrame)
                 {
-                    MessageBox.Show("ImageViewer error: " + ex.ToString());
+                    Gif = new GifImage(_imageViewer, value, _imageViewer.GifAnimation, _imageViewer.GifFPS);
                 }
+                else if (MultiPage)
+                {
+                    _bmp = null;
+                    _multiBmp = new MultiPageImage(value);
+                }
+                else
+                {
+                    _bmp = value;
+                    _multiBmp = null;
+                }
+
+                // Initial rotation adjustments
+                if (_rotation != 0)
+                {
+                    if (_rotation == 180)
+                    {
+                        Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                        _boundingRect = new Rectangle(0, 0, (int)(this.ImageWidth * Zoom), (int)(this.ImageHeight * Zoom));
+                    }
+                    else
+                    {
+                        if (_rotation == 90)
+                        {
+                            Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                        }
+                        else if (_rotation == 270)
+                        {
+                            Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                        }
+
+                        // Flip the X and Y values
+                        _boundingRect = new Rectangle(0, 0, (int)(ImageHeight * Zoom), (int)(ImageWidth * Zoom));
+                    }
+                }
+                else
+                {
+                    Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
+                    _boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+                }
+
+                Zoom = 1.0;
+                _bmpPreview = CreatePreviewImage();
+                FitToScreen();
             }
         }
 
@@ -308,15 +287,7 @@ namespace Savan
                 Bitmap temp;
 
                 // Make sure it does not crash on incorrect image formats
-                try
-                {
-                    temp = new Bitmap(value);
-                }
-                catch
-                {
-                    MessageBox.Show("ImageViewer error: Incorrect image format!");
-                    return;
-                }
+                temp = new Bitmap(value);
 
                 Image = temp;
             }
@@ -326,147 +297,119 @@ namespace Savan
         {
             var p = page - 1;
 
-            try
+            if (Image == null || MultiPage != true)
+                return;
+
+            if (p < Pages && p >= 0)
             {
-                if (Image == null || MultiPage != true)
-                    return;
+                CurrentPage = p;
 
-                if (p < Pages && p >= 0)
-                {
-                    CurrentPage = p;
-
-                    _multiBmp.SetPage(p);
-                    _multiBmp.Rotate(this._rotation);
-
-                    // No memory leaks here!
-                    _bmpPreview?.Dispose();
-                    _bmpPreview = null;
-
-                    _bmpPreview = CreatePreviewImage();
-                    AvoidOutOfScreen();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
-        }
-
-        public void NextPage()
-        {
-            try
-            {
-                if (Image == null || MultiPage != true)
-                    return;
-
-                var nextPage = CurrentPage + 1;
-
-                if (nextPage < Pages)
-                {
-                    CurrentPage = nextPage;
-
-                    _multiBmp.SetPage(CurrentPage);
-                    _multiBmp.Rotate(_rotation);
-
-                    // No memory leaks here!
-                    _bmpPreview?.Dispose();
-                    _bmpPreview = null;
-
-                    _bmpPreview = CreatePreviewImage();
-                    AvoidOutOfScreen();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
-        }
-
-        public void PreviousPage()
-        {
-            try
-            {
-                if (Image == null || MultiPage != true)
-                    return;
-
-                var prevPage = CurrentPage - 1;
-
-                if (prevPage >= 0)
-                {
-                    CurrentPage = prevPage;
-
-                    _multiBmp.SetPage(CurrentPage);
-                    _multiBmp.Rotate(_rotation);
-
-                    // No memory leaks here!
-                    _bmpPreview?.Dispose();
-                    _bmpPreview = null;
-
-                    _bmpPreview = CreatePreviewImage();
-                    AvoidOutOfScreen();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
-        }
-
-        public void Rotate(RotateFlipType type)
-        {
-            try
-            {
-                if (this.Image == null)
-                    return;
-
-                var angle = 0;
-
-                switch (type)
-                {
-                    case RotateFlipType.Rotate90FlipNone:
-                        angle = 90;
-                        break;
-                    case RotateFlipType.Rotate180FlipNone:
-                        angle = 180;
-                        break;
-                    case RotateFlipType.Rotate270FlipNone:
-                        angle = 270;
-                        break;
-                }
-
-                int tempWidth = _boundingRect.Width;
-                int tempHeight = _boundingRect.Height;
-
-                _boundingRect.Width = tempHeight;
-                _boundingRect.Height = tempWidth;
-
-                _rotation = (_rotation + angle) % 360;
-
-                if (_multiFrame)
-                {
-                    Gif.Rotate(angle);
-                }
-                else if (MultiPage)
-                {
-                    _multiBmp?.Rotate(angle);
-                }
-                else
-                {
-                    Image.RotateFlip(type);
-                }
-
-                AvoidOutOfScreen();
+                _multiBmp.SetPage(p);
+                _multiBmp.Rotate(this._rotation);
 
                 // No memory leaks here!
                 _bmpPreview?.Dispose();
                 _bmpPreview = null;
 
                 _bmpPreview = CreatePreviewImage();
+                AvoidOutOfScreen();
             }
-            catch (Exception ex)
+        }
+
+        public void NextPage()
+        {
+            if (Image == null || MultiPage != true)
+                return;
+
+            var nextPage = CurrentPage + 1;
+
+            if (nextPage < Pages)
             {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                CurrentPage = nextPage;
+
+                _multiBmp.SetPage(CurrentPage);
+                _multiBmp.Rotate(_rotation);
+
+                // No memory leaks here!
+                _bmpPreview?.Dispose();
+                _bmpPreview = null;
+
+                _bmpPreview = CreatePreviewImage();
+                AvoidOutOfScreen();
             }
+        }
+
+        public void PreviousPage()
+        {
+            if (Image == null || MultiPage != true)
+                return;
+
+            var prevPage = CurrentPage - 1;
+
+            if (prevPage >= 0)
+            {
+                CurrentPage = prevPage;
+
+                _multiBmp.SetPage(CurrentPage);
+                _multiBmp.Rotate(_rotation);
+
+                // No memory leaks here!
+                _bmpPreview?.Dispose();
+                _bmpPreview = null;
+
+                _bmpPreview = CreatePreviewImage();
+                AvoidOutOfScreen();
+            }
+        }
+
+        public void Rotate(RotateFlipType type)
+        {
+            if (this.Image == null)
+                return;
+
+            var angle = 0;
+
+            switch (type)
+            {
+                case RotateFlipType.Rotate90FlipNone:
+                    angle = 90;
+                    break;
+                case RotateFlipType.Rotate180FlipNone:
+                    angle = 180;
+                    break;
+                case RotateFlipType.Rotate270FlipNone:
+                    angle = 270;
+                    break;
+            }
+
+            int tempWidth = _boundingRect.Width;
+            int tempHeight = _boundingRect.Height;
+
+            _boundingRect.Width = tempHeight;
+            _boundingRect.Height = tempWidth;
+
+            _rotation = (_rotation + angle) % 360;
+
+            if (_multiFrame)
+            {
+                Gif.Rotate(angle);
+            }
+            else if (MultiPage)
+            {
+                _multiBmp?.Rotate(angle);
+            }
+            else
+            {
+                Image.RotateFlip(type);
+            }
+
+            AvoidOutOfScreen();
+
+            // No memory leaks here!
+            _bmpPreview?.Dispose();
+            _bmpPreview = null;
+
+            _bmpPreview = CreatePreviewImage();
         }
 
         private Bitmap RotateCenter(Bitmap bmpSrc, float theta)
@@ -640,138 +583,102 @@ namespace Savan
 
         public void JumpToOrigin(int x, int y, int width, int height, int pWidth, int pHeight)
         {
-            try
-            {
-                var zoom = (double)_boundingRect.Width / (double)width;
+            var zoom = (double)_boundingRect.Width / (double)width;
 
-                var originX = (int)(x * zoom);
-                var originY = (int)(y * zoom);
+            var originX = (int)(x * zoom);
+            var originY = (int)(y * zoom);
 
-                originX -= (originX * 2);
-                originY -= (originY * 2);
+            originX -= (originX * 2);
+            originY -= (originY * 2);
 
-                _boundingRect.X = originX + (pWidth / 2);
-                _boundingRect.Y = originY + (pHeight / 2);
+            _boundingRect.X = originX + (pWidth / 2);
+            _boundingRect.Y = originY + (pHeight / 2);
 
-                AvoidOutOfScreen();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            AvoidOutOfScreen();
         }
 
         public void JumpToOrigin(int x, int y, int width, int height)
         {
-            try
-            {
-                _boundingRect.X = (x - (width / 2)) - ((x - (width / 2)) * 2);
-                _boundingRect.Y = (y - (height / 2)) - ((y - (height / 2)) * 2);
+            _boundingRect.X = (x - (width / 2)) - ((x - (width / 2)) * 2);
+            _boundingRect.Y = (y - (height / 2)) - ((y - (height / 2)) * 2);
 
-                AvoidOutOfScreen();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            AvoidOutOfScreen();
         }
 
         public Point PointToOrigin(int x, int y, int width, int height)
         {
-            try
-            {
-                var zoomX = (double)width / (double)_boundingRect.Width;
-                var zoomY = (double)height / (double)_boundingRect.Height;
+            var zoomX = (double)width / (double)_boundingRect.Width;
+            var zoomY = (double)height / (double)_boundingRect.Height;
 
-                if (width > PanelWidth)
+            if (width > PanelWidth)
+            {
+                var oldX = (_boundingRect.X - (_boundingRect.X * 2)) + (PanelWidth / 2);
+                var oldY = (_boundingRect.Y - (_boundingRect.Y * 2)) + (PanelHeight / 2);
+
+                var newX = (int)(oldX * zoomX);
+                var newY = (int)(oldY * zoomY);
+
+                var originX = newX - (PanelWidth / 2) - ((newX - (PanelWidth / 2)) * 2);
+                var originY = newY - (PanelHeight / 2) - ((newY - (PanelHeight / 2)) * 2);
+
+                return new Point(originX, originY);
+            }
+            else
+            {
+                if (height > PanelHeight)
                 {
-                    var oldX = (_boundingRect.X - (_boundingRect.X * 2)) + (PanelWidth / 2);
                     var oldY = (_boundingRect.Y - (_boundingRect.Y * 2)) + (PanelHeight / 2);
 
-                    var newX = (int)(oldX * zoomX);
                     var newY = (int)(oldY * zoomY);
 
-                    var originX = newX - (PanelWidth / 2) - ((newX - (PanelWidth / 2)) * 2);
                     var originY = newY - (PanelHeight / 2) - ((newY - (PanelHeight / 2)) * 2);
 
-                    return new Point(originX, originY);
+                    return new Point(0, originY);
                 }
-                else
-                {
-                    if (height > PanelHeight)
-                    {
-                        var oldY = (_boundingRect.Y - (_boundingRect.Y * 2)) + (PanelHeight / 2);
 
-                        var newY = (int)(oldY * zoomY);
-
-                        var originY = newY - (PanelHeight / 2) - ((newY - (PanelHeight / 2)) * 2);
-
-                        return new Point(0, originY);
-                    }
-
-                    return new Point(0, 0);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
                 return new Point(0, 0);
             }
         }
 
         public void ZoomIn()
         {
-            try
+            if (Image == null)
+                return;
+
+            // Make sure zoom steps are with 25%
+            var index = 0.25 - (Zoom % 0.25);
+
+            if (index != 0)
             {
-                if (Image == null)
-                    return;
-
-                // Make sure zoom steps are with 25%
-                var index = 0.25 - (Zoom % 0.25);
-
-                if (index != 0)
-                {
-                    Zoom += index;
-                }
-                else
-                {
-                    Zoom += 0.25;
-                }
-
-                SetZoom(Zoom);
+                Zoom += index;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                Zoom += 0.25;
             }
+
+            SetZoom(Zoom);
         }
 
         public void ZoomOut()
         {
-            try
-            {
-                if (Image == null)
-                    return;
+            if (Image == null)
+                return;
 
-                // Make sure zoom steps are with 25% and higher than 0%
-                if (Zoom - 0.25 > 0)
+            // Make sure zoom steps are with 25% and higher than 0%
+            if (Zoom - 0.25 > 0)
+            {
+                if (((Zoom - 0.25) % 0.25) != 0)
                 {
-                    if (((Zoom - 0.25) % 0.25) != 0)
-                    {
-                        Zoom -= Zoom % 0.25;
-                    }
-                    else
-                    {
-                        Zoom -= 0.25;
-                    }
+                    Zoom -= Zoom % 0.25;
                 }
+                else
+                {
+                    Zoom -= 0.25;
+                }
+            }
 
-                SetZoom(Zoom);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            SetZoom(Zoom);
         }
 
         public void SetPosition(int x, int y)
@@ -792,265 +699,209 @@ namespace Savan
 
         public void SetZoom(double z)
         {
-            try
-            {
-                if (Image == null)
-                    return;
+            if (Image == null)
+                return;
 
-                Zoom = z;
+            Zoom = z;
 
-                var p = PointToOrigin(_boundingRect.X, _boundingRect.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+            var p = PointToOrigin(_boundingRect.X, _boundingRect.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
 
-                _boundingRect = new Rectangle(p.X, p.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
-                AvoidOutOfScreen();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            _boundingRect = new Rectangle(p.X, p.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+            AvoidOutOfScreen();
         }
 
         public void Scroll(object sender, MouseEventArgs e)
         {
-            try
-            {
-                if (Image == null)
-                    return;
+            if (Image == null)
+                return;
 
-                if (e.Delta < 0)
-                {
-                    ZoomOut();
-                }
-                else
-                {
-                    ZoomIn();
-                }
-            }
-            catch (Exception ex)
+            if (e.Delta < 0)
             {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                ZoomOut();
+            }
+            else
+            {
+                ZoomIn();
             }
         }
 
         public void FitToScreen()
         {
-            try
+            if (Image == null)
+                return;
+
+            var x_ratio = (double)PanelWidth / (double)ImageWidth;
+            var y_ratio = (double)PanelHeight / (double)ImageHeight;
+
+            if ((ImageWidth <= PanelWidth) && (ImageHeight <= PanelHeight))
             {
-                if (Image == null)
-                    return;
-
-                var x_ratio = (double)PanelWidth / (double)ImageWidth;
-                var y_ratio = (double)PanelHeight / (double)ImageHeight;
-
-                if ((ImageWidth <= PanelWidth) && (ImageHeight <= PanelHeight))
-                {
-                    _boundingRect.Width = ImageWidth;
-                    _boundingRect.Height = ImageHeight;
-                }
-                else if ((x_ratio * ImageHeight) < PanelHeight)
-                {
-                    _boundingRect.Height = Convert.ToInt32(Math.Ceiling(x_ratio * ImageHeight));
-                    _boundingRect.Width = PanelWidth;
-                }
-                else
-                {
-                    _boundingRect.Width = Convert.ToInt32(Math.Ceiling(y_ratio * ImageWidth));
-                    _boundingRect.Height = PanelHeight;
-                }
-
-                _boundingRect.X = 0;
-                _boundingRect.Y = 0;
-
-                Zoom = ((double)_boundingRect.Width / (double)ImageWidth);
+                _boundingRect.Width = ImageWidth;
+                _boundingRect.Height = ImageHeight;
             }
-            catch (Exception ex)
+            else if ((x_ratio * ImageHeight) < PanelHeight)
             {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                _boundingRect.Height = Convert.ToInt32(Math.Ceiling(x_ratio * ImageHeight));
+                _boundingRect.Width = PanelWidth;
             }
+            else
+            {
+                _boundingRect.Width = Convert.ToInt32(Math.Ceiling(y_ratio * ImageWidth));
+                _boundingRect.Height = PanelHeight;
+            }
+
+            _boundingRect.X = 0;
+            _boundingRect.Y = 0;
+
+            Zoom = ((double)_boundingRect.Width / (double)ImageWidth);
         }
 
         public void AvoidOutOfScreen()
         {
-            try
+            // Am I lined out to the left?
+            if (_boundingRect.X >= 0)
             {
-                // Am I lined out to the left?
-                if (_boundingRect.X >= 0)
+                _boundingRect.X = 0;
+            }
+            else if ((_boundingRect.X <= (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)))
+            {
+                if ((_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2) <= 0)
                 {
+                    // I am too far to the left!
+                    _boundingRect.X = (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2);
+                }
+                else
+                {
+                    // I am too far to the right!
                     _boundingRect.X = 0;
                 }
-                else if ((_boundingRect.X <= (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)))
-                {
-                    if ((_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2) <= 0)
-                    {
-                        // I am too far to the left!
-                        _boundingRect.X = (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2);
-                    }
-                    else
-                    {
-                        // I am too far to the right!
-                        _boundingRect.X = 0;
-                    }
-                }
+            }
 
-                // Am I lined out to the top?
-                if (_boundingRect.Y >= 0)
+            // Am I lined out to the top?
+            if (_boundingRect.Y >= 0)
+            {
+                _boundingRect.Y = 0;
+            }
+            else if ((_boundingRect.Y <= (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2)))
+            {
+                if ((_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) <= 0)
                 {
+                    // I am too far to the top!
+                    _boundingRect.Y = (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2);
+                }
+                else
+                {
+                    // I am too far to the bottom!
                     _boundingRect.Y = 0;
                 }
-                else if ((_boundingRect.Y <= (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2)))
-                {
-                    if ((_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) <= 0)
-                    {
-                        // I am too far to the top!
-                        _boundingRect.Y = (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2);
-                    }
-                    else
-                    {
-                        // I am too far to the bottom!
-                        _boundingRect.Y = 0;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
             }
         }
 
         public void Drag(Point pt)
         {
-            try
+            if (this.Image == null || IsDragging != true)
+                return;
+
+            // Am I dragging it outside of the panel?
+            if ((pt.X - _dragPoint.X > (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)) && (pt.X - _dragPoint.X < 0))
             {
-                if (this.Image == null || IsDragging != true)
-                    return;
-
-                // Am I dragging it outside of the panel?
-                if ((pt.X - _dragPoint.X > (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)) && (pt.X - _dragPoint.X < 0))
+                // No, everything is just fine
+                _boundingRect.X = pt.X - _dragPoint.X;
+            }
+            else if ((pt.X - _dragPoint.X > 0))
+            {
+                // Now don't drag it out of the panel please
+                _boundingRect.X = 0;
+            }
+            else if ((pt.X - _dragPoint.X < (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)))
+            {
+                // I am dragging it out of my panel. How many pixels do I have left?
+                if ((_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2) <= 0)
                 {
-                    // No, everything is just fine
-                    _boundingRect.X = pt.X - _dragPoint.X;
-                }
-                else if ((pt.X - _dragPoint.X > 0))
-                {
-                    // Now don't drag it out of the panel please
-                    _boundingRect.X = 0;
-                }
-                else if ((pt.X - _dragPoint.X < (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)))
-                {
-                    // I am dragging it out of my panel. How many pixels do I have left?
-                    if ((_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2) <= 0)
-                    {
-                        // Make it fit perfectly
-                        _boundingRect.X = (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2);
-                    }
-                }
-
-                // Am I dragging it outside of the panel?
-                if (pt.Y - _dragPoint.Y > (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) && (pt.Y - _dragPoint.Y < 0))
-                {
-                    // No, everything is just fine
-                    _boundingRect.Y = pt.Y - _dragPoint.Y;
-                }
-                else if ((pt.Y - _dragPoint.Y > 0))
-                {
-                    // Now don't drag it out of the panel please
-                    _boundingRect.Y = 0;
-                }
-                else if (pt.Y - _dragPoint.Y < (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2))
-                {
-                    // I am dragging it out of my panel. How many pixels do I have left?
-                    if ((_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) <= 0)
-                    {
-                        // Make it fit perfectly
-                        _boundingRect.Y = (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2);
-                    }
+                    // Make it fit perfectly
+                    _boundingRect.X = (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2);
                 }
             }
-            catch (Exception ex)
+
+            // Am I dragging it outside of the panel?
+            if (pt.Y - _dragPoint.Y > (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) && (pt.Y - _dragPoint.Y < 0))
             {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                // No, everything is just fine
+                _boundingRect.Y = pt.Y - _dragPoint.Y;
+            }
+            else if ((pt.Y - _dragPoint.Y > 0))
+            {
+                // Now don't drag it out of the panel please
+                _boundingRect.Y = 0;
+            }
+            else if (pt.Y - _dragPoint.Y < (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2))
+            {
+                // I am dragging it out of my panel. How many pixels do I have left?
+                if ((_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) <= 0)
+                {
+                    // Make it fit perfectly
+                    _boundingRect.Y = (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2);
+                }
             }
         }
 
         public void BeginDrag(Point pt)
         {
-            try
-            {
-                if (Image == null)
-                    return;
+            if (Image == null)
+                return;
 
-                // Initial drag position
-                _dragPoint.X = pt.X - _boundingRect.X;
-                _dragPoint.Y = pt.Y - _boundingRect.Y;
-                IsDragging = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
+            // Initial drag position
+            _dragPoint.X = pt.X - _boundingRect.X;
+            _dragPoint.Y = pt.Y - _boundingRect.Y;
+            IsDragging = true;
         }
 
         public void EndDrag()
         {
-            try
+            if (Image != null)
             {
-                if (Image != null)
-                {
-                    IsDragging = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                IsDragging = false;
             }
         }
 
         public void Draw(Graphics g)
         {
-            try
+            if (_multiFrame)
             {
-                if (_multiFrame)
+                if (Gif.CurrentFrame != null)
                 {
-                    if (Gif.CurrentFrame != null)
+                    if (Gif.Lock())
                     {
-                        if (Gif.Lock())
+                        lock (Gif.CurrentFrame)
                         {
-                            lock (Gif.CurrentFrame)
+                            if (Gif.Rotation != 0)
                             {
-                                if (Gif.Rotation != 0)
-                                {
-                                    var rotated = RotateCenter(Gif.CurrentFrame, Gif.Rotation);
-                                    g.DrawImage(rotated, _boundingRect);
+                                var rotated = RotateCenter(Gif.CurrentFrame, Gif.Rotation);
+                                g.DrawImage(rotated, _boundingRect);
 
-                                    rotated.Dispose();
-                                }
-                                else
-                                {
-                                    g.DrawImage(Gif.CurrentFrame, _boundingRect);
-                                }
+                                rotated.Dispose();
+                            }
+                            else
+                            {
+                                g.DrawImage(Gif.CurrentFrame, _boundingRect);
                             }
                         }
-                        Gif.Unlock();
                     }
-                }
-                if (MultiPage)
-                {
-                    if (_multiBmp?.Image != null)
-                    {
-                        g.DrawImage(_multiBmp.Image, _boundingRect);
-                    }
-                }
-                else
-                {
-                    if (_bmp != null)
-                    {
-                        g.DrawImage(_bmp, _boundingRect);
-                    }
+                    Gif.Unlock();
                 }
             }
-            catch (Exception ex)
+            if (MultiPage)
             {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
+                if (_multiBmp?.Image != null)
+                {
+                    g.DrawImage(_multiBmp.Image, _boundingRect);
+                }
+            }
+            else
+            {
+                if (_bmp != null)
+                {
+                    g.DrawImage(_bmp, _boundingRect);
+                }
             }
         }
 

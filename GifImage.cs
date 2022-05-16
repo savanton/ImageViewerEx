@@ -119,32 +119,25 @@ namespace Savan
 
         public void NextFrame()
         {
-            try
+            if (_gif != null)
             {
-                if (_gif != null)
+                if (Lock())
                 {
-                    if (Lock())
+                    lock (_gif)
                     {
-                        lock (_gif)
+                        _gif.SelectActiveFrame(_dimension, _currentFrame);
+                        _currentFrame++;
+
+                        if (_currentFrame >= FrameCount)
                         {
-                            _gif.SelectActiveFrame(_dimension, _currentFrame);
-                            _currentFrame++;
-
-                            if (_currentFrame >= FrameCount)
-                            {
-                                _currentFrame = 0;
-                            }
-
-                            OnFrameChanged();
+                            _currentFrame = 0;
                         }
-                    }
 
-                    Unlock();
+                        OnFrameChanged();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show(ex.ToString());
+
+                Unlock();
             }
         }
 

@@ -450,7 +450,7 @@ namespace Savan
                     {
                         panelMenu.Width = pbFull.Width;
                     }
-                                        
+
                     InitControl();
                     _drawing.AvoidOutOfScreen();
                     pbFull.Refresh();
@@ -734,7 +734,7 @@ namespace Savan
                 // Keep selecting
                 _ptSelectionEnd.X = e.X;
                 _ptSelectionEnd.Y = e.Y;
-                
+
                 Rectangle pbFullRect = new Rectangle(0, 0, pbFull.Width - 1, pbFull.Height - 1);
 
                 // Am I still selecting within my panel?
@@ -758,7 +758,7 @@ namespace Savan
                     // I'm not dragging OR selecting
                     // Make sure if left or right shift is pressed to change cursor
 
-                    if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || _selectMode == true) 
+                    if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || _selectMode == true)
                     {
                         // Fancy Cursor
                         if (pbFull.Cursor != Cursors.Cross)
@@ -1056,38 +1056,31 @@ namespace Savan
 
         private void cbZoom_KeyPress(object sender, KeyPressEventArgs e)
         {
-            try
+            // If it's not a digit, delete or backspace then make sure the input is being handled with. (Suppressed)
+            if (!Char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Delete && e.KeyChar != (char)Keys.Back)
             {
-                // If it's not a digit, delete or backspace then make sure the input is being handled with. (Suppressed)
-                if (!Char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Delete && e.KeyChar != (char)Keys.Back)
+                // If enter is pressed apply the entered zoom
+                if (e.KeyChar == (char)Keys.Return)
                 {
-                    // If enter is pressed apply the entered zoom
-                    if (e.KeyChar == (char)Keys.Return)
+                    int zoom = 0;
+
+                    // Make sure the percent sign is out of the cbZoom.Text
+                    int.TryParse(cbZoom.Text.Replace("%", ""), out zoom);
+
+                    // If zoom is higher than zero
+                    if (zoom > 0)
                     {
-                        int zoom = 0;
+                        // Make it a double!
+                        double zoomDouble = (double)zoom / (double)100;
 
-                        // Make sure the percent sign is out of the cbZoom.Text
-                        int.TryParse(cbZoom.Text.Replace("%", ""), out zoom);
+                        _drawing.SetZoom(zoomDouble);
+                        UpdatePanels(true);
 
-                        // If zoom is higher than zero
-                        if (zoom > 0)
-                        {
-                            // Make it a double!
-                            double zoomDouble = (double)zoom / (double)100;
-
-                            _drawing.SetZoom(zoomDouble);
-                            UpdatePanels(true);
-
-                            btnZoomIn.Focus();
-                        }
+                        btnZoomIn.Focus();
                     }
-
-                    e.Handled = true;
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("ImageViewer error: " + ex.ToString());
+
+                e.Handled = true;
             }
         }
 
@@ -1130,65 +1123,51 @@ namespace Savan
 
         private void pbFull_DragDrop(object sender, DragEventArgs e)
         {
-            try
+            // Get The file(s) you dragged into an array. (We'll just pick the first image anyway)
+            string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            for (int f = 0; f < FileList.Length; f++)
             {
-                // Get The file(s) you dragged into an array. (We'll just pick the first image anyway)
-                string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-                
-                for (int f = 0; f < FileList.Length; f++)
+                // Make sure the file exists!
+                if (System.IO.File.Exists(FileList[f]))
                 {
-                    // Make sure the file exists!
-                    if (System.IO.File.Exists(FileList[f]))
+                    string ext = (System.IO.Path.GetExtension(FileList[f])).ToLower();
+
+                    // Checking the extensions to be Image formats
+                    if (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".wmf" || ext == ".emf" || ext == ".bmp" || ext == ".png" || ext == ".tif" || ext == ".tiff")
                     {
-                        string ext = (System.IO.Path.GetExtension(FileList[f])).ToLower();
-
-                        // Checking the extensions to be Image formats
-                        if (ext == ".jpg" || ext == ".jpeg" || ext == ".gif" || ext == ".wmf" || ext == ".emf" || ext == ".bmp" || ext == ".png" || ext == ".tif" || ext == ".tiff")
+                        try
                         {
-                            try
-                            {
-                                // Try to load it into a bitmap
-                                //newBmp = Bitmap.FromFile(FileList[f]);
-                                this.ImagePath = FileList[f];
+                            // Try to load it into a bitmap
+                            //newBmp = Bitmap.FromFile(FileList[f]);
+                            this.ImagePath = FileList[f];
 
-                                // If succeeded stop the loop
-                                if (this.Image != null)
-                                {
-                                    break;
-                                }
-                            }
-                            catch
+                            // If succeeded stop the loop
+                            if (this.Image != null)
                             {
-                                // Not an image?
+                                break;
                             }
+                        }
+                        catch
+                        {
+                            // Not an image?
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("ImageViewer error: " + ex.ToString());
             }
         }
 
         private void pbFull_DragEnter(object sender, DragEventArgs e)
         {
-            try
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                {
-                    // Drop the file
-                    e.Effect = DragDropEffects.Copy;
-                }
-                else
-                {
-                    // I'm not going to accept this unknown format!
-                    e.Effect = DragDropEffects.None;
-                }
+                // Drop the file
+                e.Effect = DragDropEffects.Copy;
             }
-            catch (Exception ex)
+            else
             {
-                System.Windows.Forms.MessageBox.Show("ImageViewer error: " + ex.ToString());
+                // I'm not going to accept this unknown format!
+                e.Effect = DragDropEffects.None;
             }
         }
 
@@ -1226,38 +1205,31 @@ namespace Savan
 
         private void tbNavigation_KeyPress(object sender, KeyPressEventArgs e)
         {
-            try
+            // If it's not a digit, delete or backspace then make sure the input is being handled with. (Suppressed)
+            if (!Char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Delete && e.KeyChar != (char)Keys.Back)
             {
-                // If it's not a digit, delete or backspace then make sure the input is being handled with. (Suppressed)
-                if (!Char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Delete && e.KeyChar != (char)Keys.Back)
+                // If enter is pressed apply the entered zoom
+                if (e.KeyChar == (char)Keys.Return)
                 {
-                    // If enter is pressed apply the entered zoom
-                    if (e.KeyChar == (char)Keys.Return)
+                    int page = 0;
+
+                    int.TryParse(tbNavigation.Text, out page);
+
+                    // If zoom is higher than zero
+                    if (page > 0 && page <= _drawing.Pages)
                     {
-                        int page = 0;
+                        _drawing.SetPage(page);
+                        UpdatePanels(true);
 
-                        int.TryParse(tbNavigation.Text, out page);
-                        
-                        // If zoom is higher than zero
-                        if (page > 0 && page <= _drawing.Pages)
-                        {
-                            _drawing.SetPage(page);
-                            UpdatePanels(true);
-
-                            btnZoomIn.Focus();
-                        }
-                        else
-                        {
-                            tbNavigation.Text = _drawing.CurrentPage.ToString();
-                        }
+                        btnZoomIn.Focus();
                     }
-
-                    e.Handled = true;
+                    else
+                    {
+                        tbNavigation.Text = _drawing.CurrentPage.ToString();
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("ImageViewer error: " + ex.ToString());
+
+                e.Handled = true;
             }
         }
 
@@ -1296,7 +1268,7 @@ namespace Savan
                 UpdatePanels(true);
             }
         }
-    
+
         #endregion Non Public Members
     }
 
