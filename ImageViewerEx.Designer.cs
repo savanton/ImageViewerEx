@@ -1,6 +1,6 @@
 ﻿namespace Savan
 {
-    partial class ImageViewer
+    partial class ImageViewerEx
     {
         /// <summary>
         /// Required designer variable.

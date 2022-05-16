@@ -8,16 +8,30 @@ namespace Savan
 {
     public class MultiPageImage
     {
+        #region Fields
+
+        private int currentPage;
+
+        private Bitmap image;
+
+        private Bitmap bmp;
+
+        #endregion Fields
+
+        #region C'tors
+
         public MultiPageImage(Bitmap image)
         {
             Image = image;
             currentPage = 0;
         }
+
+        #endregion C'tors
+
+        #region Public Members
+
         public int Rotation { get; private set; }
 
-        private int currentPage;
-
-        private Bitmap image;
         public Bitmap Image
         {
             get => bmp;
@@ -40,8 +54,6 @@ namespace Savan
                 bmp = new Bitmap(image);
             }
         }
-
-        private Bitmap bmp;
 
         public Bitmap Page => bmp ?? (bmp = new Bitmap(image));
 
@@ -93,7 +105,7 @@ namespace Savan
             {
                 return null;
             }
-            
+
             if (currentPage != pageNumber)
             {
                 int pages = image.GetFrameCount(FrameDimension.Page);
@@ -124,5 +136,7 @@ namespace Savan
             bmp?.Dispose();
             bmp = null;
         }
+
+        #endregion Public Members
     }
 }

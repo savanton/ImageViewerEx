@@ -7,19 +7,38 @@ using System.ComponentModel;
 
 namespace Savan
 {
-    public enum KpZoom
+    public partial class ImageViewerEx : UserControl
     {
-        ZoomIn,
-        ZoomOut
-    }
+        #region Types/Enums/Delegates
 
-    public partial class ImageViewer : UserControl
-    {
+        public enum ZoomType
+        {
+            In,
+            Out
+        }
+
+        public delegate void ImageViewerRotationEventHandler(object sender, ImageViewerRotationEventArgs e);
+        public delegate void ImageViewerZoomEventHandler(object sender, ImageViewerZoomEventArgs e);
+
+        #endregion Types/Enums/Delegates
+
+        #region Interops
+
         [System.Runtime.InteropServices.DllImport("user32.dll")]
-        static extern short GetKeyState(int key);
+        private static extern short GetKeyState(int key);
+
+        #endregion Interops
+
+        #region Events
+
+        public event ImageViewerRotationEventHandler AfterRotation;
+        public event ImageViewerZoomEventHandler AfterZoom;
+
+        #endregion Events
+
+        #region Fields
 
         private DrawObject drawing;
-        private Bitmap preview;
 
         private bool isScrolling;
         private bool scrollbars;
@@ -35,25 +54,58 @@ namespace Savan
         private Cursor grabCursor;
         private Cursor dragCursor;
 
-        public delegate void ImageViewerRotationEventHandler(object sender, ImageViewerRotationEventArgs e);
-        public event ImageViewerRotationEventHandler AfterRotation;
+        private Bitmap preview;
 
-        protected virtual void OnRotation(ImageViewerRotationEventArgs e)
+        #endregion Fields
+
+        #region C'tors
+
+        public ImageViewerEx()
         {
-            AfterRotation?.Invoke(this, e);
+            // DrawObject initialization
+            drawing = new DrawObject(this);
+
+            try
+            {
+                var a = Assembly.GetExecutingAssembly();
+
+                // Stream to initialize the cursors.
+                using (var imgStream = a.GetManifestResourceStream("Savan.Resources.Grab.cur"))
+                {
+                    if (imgStream != null)
+                    {
+                        grabCursor = new Cursor(imgStream);
+                    }
+                }
+
+                using (var imgStream = a.GetManifestResourceStream("Savan.Resources.Drag.cur"))
+                {
+                    if (imgStream != null)
+                    {
+                        dragCursor = new Cursor(imgStream);
+                    }
+                }
+            }
+            catch
+            {
+                // Cursors could not be found
+            }
+
+            InitializeComponent();
+
+            InitControl();
+
+            Preview();
         }
+
+
+        #endregion
+
+        #region Public Members
 
         public int PanelWidth => pbFull.Width;
 
         public int PanelHeight => pbFull.Height;
-
-        public delegate void ImageViewerZoomEventHandler(object sender, ImageViewerZoomEventArgs e);
-        public event ImageViewerZoomEventHandler AfterZoom;
-
-        protected virtual void OnZoom(ImageViewerZoomEventArgs e)
-        {
-            AfterZoom?.Invoke(this, e);
-        }
 
         public void InvalidatePanel()
         {
@@ -100,32 +152,6 @@ namespace Savan
             }
         }
 
-        private bool IsKeyPressed(int key)
-        {
-            var keyPressed = false;
-            var result = GetKeyState(key);
-
-            switch (result)
-            {
-                case 0:
-                    // Not pressed and not toggled
-                    keyPressed = false;
-                    break;
-
-                case 1:
-                    // Not presses but toggled
-                    keyPressed = false;
-                    break;
-
-                default:
-                    // Pressed
-                    keyPressed = true;
-                    break;
-            }
-
-            return keyPressed;
-        }
-
         public bool OpenButton
         {
             get => btnOpen.Visible;
@@ -134,16 +160,15 @@ namespace Savan
                 if (value)
                 {
                     btnOpen.Show();
-                    btnPreview.Location = btnOpen.Visible == true ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
+                    btnPreview.Location = btnOpen.Visible ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
                 }
                 else
                 {
                     btnOpen.Hide();
-                    btnPreview.Location = btnOpen.Visible == true ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
+                    btnPreview.Location = btnOpen.Visible ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
                 }
             }
         }
-
 
         public bool PreviewButton
         {
@@ -152,7 +177,7 @@ namespace Savan
             {
                 if (value)
                 {
-                    btnPreview.Location = btnOpen.Visible == true ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
+                    btnPreview.Location = btnOpen.Visible ? new Point(198, btnPreview.Location.Y) : new Point(btnOpen.Location.X, btnPreview.Location.Y);
                     btnPreview.Show();
                 }
                 else
@@ -259,8 +284,8 @@ namespace Savan
 
         public string ImagePath
         {
-            set 
-            { 
+            set
+            {
                 drawing.ImagePath = value;
 
                 UpdatePanels(true);
@@ -296,9 +321,117 @@ namespace Savan
                 // Making sure the rotation is 0, 90, 180 or 270 degrees!
                 if (value == 90 || value == 180 || value == 270 || value == 0)
                 {
-                     drawing.Rotation = value;
+                    drawing.Rotation = value;
                 }
             }
+        }
+
+        public bool ShowPreview
+        {
+            get => showPreview;
+            set
+            {
+                if (showPreview != value)
+                {
+                    showPreview = value;
+                    Preview();
+                }
+            }
+        }
+
+        public void InitControl()
+        {
+            if (!scrollbars)
+            {
+                sbHoriz.Visible = false;
+                sbVert.Visible = false;
+                sbPanel.Visible = false;
+            }
+        }
+
+        public void Rotate90()
+        {
+            if (drawing != null)
+            {
+                drawing.Rotate(RotateFlipType.Rotate90FlipNone);
+
+                // AfterRotation Event
+                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                UpdatePanels(true);
+                ToggleMultiPage();
+            }
+        }
+
+        public void Rotate180()
+        {
+            if (drawing != null)
+            {
+                drawing.Rotate(RotateFlipType.Rotate180FlipNone);
+
+                // AfterRotation Event
+                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                UpdatePanels(true);
+                ToggleMultiPage();
+            }
+        }
+
+        public void Rotate270()
+        {
+            if (drawing != null)
+            {
+                drawing.Rotate(RotateFlipType.Rotate270FlipNone);
+
+                // AfterRotation Event
+                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                UpdatePanels(true);
+                ToggleMultiPage();
+            }
+        }
+
+        public void FitToScreen()
+        {
+            drawing.FitToScreen();
+            UpdatePanels(true);
+        }
+
+        #endregion Public Members
+
+        #region Non Public Members
+
+        protected virtual void OnRotation(ImageViewerRotationEventArgs e)
+        {
+            AfterRotation?.Invoke(this, e);
+        }
+
+        protected virtual void OnZoom(ImageViewerZoomEventArgs e)
+        {
+            AfterZoom?.Invoke(this, e);
+        }
+
+        private bool IsKeyPressed(int key)
+        {
+            bool keyPressed;
+            var result = GetKeyState(key);
+
+            switch (result)
+            {
+                case 0:
+                    // Not pressed and not toggled
+                    keyPressed = false;
+                    break;
+
+                case 1:
+                    // Not presses but toggled
+                    keyPressed = false;
+                    break;
+
+                default:
+                    // Pressed
+                    keyPressed = true;
+                    break;
+            }
+
+            return keyPressed;
         }
 
         private void Preview()
@@ -353,72 +486,11 @@ namespace Savan
             }
         }
 
-        public bool ShowPreview
-        {
-            get => showPreview;
-            set
-            {
-                if (showPreview != value)
-                {
-                    showPreview = value;
-                    Preview();
-                }
-            }
-        }
-
-        public ImageViewer()
-        {
-            // DrawObject initialization
-            drawing = new DrawObject(this);
-
-            try
-            {
-                var a = Assembly.GetExecutingAssembly();
-
-                // Stream to initialize the cursors.
-                using (var imgStream = a.GetManifestResourceStream("Savan.Resources.Grab.cur"))
-                {
-                    if (imgStream != null)
-                    {
-                        grabCursor = new Cursor(imgStream);
-                    }
-                }
-
-                using (var imgStream = a.GetManifestResourceStream("Savan.Resources.Drag.cur"))
-                {
-                    if (imgStream != null)
-                    {
-                        dragCursor = new Cursor(imgStream);
-                    }
-                }
-            }
-            catch
-            {
-                // Cursors could not be found
-            }
-
-            InitializeComponent();
-
-            InitControl();
-
-            Preview();
-        }
-
         private void DisposeControl()
         {
             // No memory leaks here
             drawing?.Dispose();
             preview?.Dispose();
-        }
-
-        public void InitControl()
-        {
-            if (!scrollbars)
-            {
-                sbHoriz.Visible = false;
-                sbVert.Visible = false;
-                sbPanel.Visible = false;
-            }
         }
 
         private void FocusOnMe()
@@ -740,11 +812,11 @@ namespace Savan
             {
                 if (e.Delta < 0)
                 {
-                    OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, KpZoom.ZoomOut));
+                    OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.Out));
                 }
                 else
                 {
-                    OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, KpZoom.ZoomIn));
+                    OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.In));
                 }
             }
 
@@ -753,16 +825,18 @@ namespace Savan
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.gif;*.bmp;*.png;*.tif;*.tiff;*.wmf;*.emf|JPEG Files (*.jpg)|*.jpg;*.jpeg|GIF Files (*.gif)|*.gif|BMP Files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|TIF files (*.tif;*.tiff)|*.tif;*.tiff|EMF/WMF Files (*.wmf;*.emf)|*.wmf;*.emf|All files (*.*)|*.*";
-
-            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+            using (var openFileDialog = new OpenFileDialog())
             {
-                this.ImagePath = openFileDialog.FileName;
-            }
+                openFileDialog.Filter =
+                    "Image Files|*.jpg;*.jpeg;*.gif;*.bmp;*.png;*.tif;*.tiff;*.wmf;*.emf|JPEG Files (*.jpg)|*.jpg;*.jpeg|GIF Files (*.gif)|*.gif|BMP Files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|TIF files (*.tif;*.tiff)|*.tif;*.tiff|EMF/WMF Files (*.wmf;*.emf)|*.wmf;*.emf|All files (*.*)|*.*";
 
-            UpdatePanels(true);
+                if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    this.ImagePath = openFileDialog.FileName;
+                }
+
+                UpdatePanels(true);
+            }
         }
 
         public void Open(byte[] imageContent)
@@ -796,45 +870,6 @@ namespace Savan
             }
         }
 
-        public void Rotate90()
-        {
-            if (drawing != null)
-            {
-                drawing.Rotate(RotateFlipType.Rotate90FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
-        }
-
-        public void Rotate180()
-        {
-            if (drawing != null)
-            {
-                drawing.Rotate(RotateFlipType.Rotate180FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
-        }
-
-        public void Rotate270()
-        {
-            if (drawing != null)
-            {
-                drawing.Rotate(RotateFlipType.Rotate270FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
-        }
-
         private void btnZoomOut_Click(object sender, EventArgs e)
         {
             drawing.ZoomOut();
@@ -842,7 +877,7 @@ namespace Savan
             // AfterZoom Event
             if (drawing.Image != null)
             {
-                OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, KpZoom.ZoomOut));
+                OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.Out));
             }
             UpdatePanels(true);
         }
@@ -854,18 +889,12 @@ namespace Savan
             // AfterZoom Event
             if (drawing.Image != null)
             {
-                OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, KpZoom.ZoomIn));
+                OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.In));
             }
             UpdatePanels(true);
         }
 
         private void btnFitToScreen_Click(object sender, EventArgs e)
-        {
-            drawing.FitToScreen();
-            UpdatePanels(true);
-        }
-
-        public void FitToScreen()
         {
             drawing.FitToScreen();
             UpdatePanels(true);
@@ -884,11 +913,11 @@ namespace Savan
                 {
                     if (zoom > originalZoom)
                     {
-                        OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, KpZoom.ZoomIn));
+                        OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.In));
                     }
                     else
                     {
-                        OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, KpZoom.ZoomOut));
+                        OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.Out));
                     }
                 }
 
@@ -1309,31 +1338,29 @@ namespace Savan
                 UpdatePanels(true);
             }
         }
+    
+        #endregion Non Public Members
     }
 
     public class ImageViewerRotationEventArgs : EventArgs
     {
-        private int rotation;
-        public int Rotation
-        {
-            get { return rotation; }
-        }
+        public int Rotation { get; }
 
         public ImageViewerRotationEventArgs(int rotation)
         {
-            this.rotation = rotation;
+            Rotation = rotation;
         }
     }
 
     public class ImageViewerZoomEventArgs : EventArgs
     {
         public int Zoom { get; }
-        public KpZoom InOut { get; }
+        public ImageViewerEx.ZoomType InOut { get; }
 
-        public ImageViewerZoomEventArgs(double zoom, KpZoom inOut)
+        public ImageViewerZoomEventArgs(double zoom, ImageViewerEx.ZoomType inOut)
         {
-            this.Zoom = Convert.ToInt32(Math.Round((zoom * 100), 0));
-            this.InOut = inOut;
+            Zoom = Convert.ToInt32(Math.Round((zoom * 100), 0));
+            InOut = inOut;
         }
     }
 }

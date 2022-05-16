@@ -10,17 +10,60 @@ namespace Savan
 {
     public class DrawObject
     {
-        private ImageViewer imageViewer;
+        #region Fields
+
+        private ImageViewerEx imageViewer;
         private	Rectangle boundingRect;
 		private	Point dragPoint;
         private Bitmap bmp;
         private Bitmap bmpPreview;
         private MultiPageImage multiBmp;
-
-        private int panelWidth => imageViewer.PanelWidth;
-        private int panelHeight => imageViewer.PanelHeight;
-        private int rotation;
         private bool multiFrame;
+        private int rotation;
+
+        #endregion Fields
+
+        #region C'tors
+
+        public DrawObject(ImageViewerEx viewer, Bitmap bmp)
+        {
+            try
+            {
+                imageViewer = viewer;
+
+                // Initial dragging to false and an Image.
+                IsDragging = false;
+                Image = bmp;
+                Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
+
+                boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("ImageViewer error: " + ex.ToString());
+            }
+        }
+
+        public DrawObject(ImageViewerEx viewer)
+        {
+            try
+            {
+                imageViewer = viewer;
+                // Initial dragging to false and No image.
+                IsDragging = false;
+                bmp = null;
+                multiBmp = null;
+                Gif = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("ImageViewer error: " + ex.ToString());
+            }
+        }
+
+        #endregion
+
+        #region Public Members
 
         public Rectangle BoundingBox => boundingRect;
 
@@ -95,6 +138,7 @@ namespace Savan
 
             return null;
         }
+
         public int ImageWidth
         {
             get
@@ -254,7 +298,7 @@ namespace Savan
                 }
             }
         }
-        
+
         public Image PreviewImage => bmpPreview;
 
         public string ImagePath
@@ -276,31 +320,6 @@ namespace Savan
 
                 Image = temp;
             }
-        }
-
-        public DrawObject(ImageViewer viewer, Bitmap bmp)
-        {
-            try
-            {
-                imageViewer = viewer;
-
-                // Initial dragging to false and an Image.
-                IsDragging = false;
-                Image = bmp;
-                Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
-
-                boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
-        }
-
-        private ImageCodecInfo GetCodec(string type)
-        {
-            var info = ImageCodecInfo.GetImageEncoders();
-            return info.FirstOrDefault(codecInfo => codecInfo.FormatDescription.Equals(type));
         }
 
         public void SetPage(int page)
@@ -393,23 +412,6 @@ namespace Savan
             }
         }
 
-        public DrawObject(ImageViewer viewer)
-        {
-            try
-            {
-                imageViewer = viewer;
-                // Initial dragging to false and No image.
-                IsDragging = false;
-                bmp = null;
-                multiBmp = null;
-                Gif = null;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ImageViewer error: " + ex.ToString());
-            }
-        }
-
         public void Rotate(RotateFlipType type)
         {
             try
@@ -469,13 +471,13 @@ namespace Savan
 
         private Bitmap RotateCenter(Bitmap bmpSrc, float theta)
         {
-            if(theta == 180.0f)
+            if (theta == 180.0f)
             {
                 var bmpDest = new Bitmap(bmpSrc.Width, bmpSrc.Height);
                 var gDest = Graphics.FromImage(bmpDest);
 
                 gDest.DrawImage(bmpSrc, new Point(0, 0));
-                
+
                 bmpDest.RotateFlip(RotateFlipType.Rotate180FlipNone);
 
                 return bmpDest;
@@ -726,8 +728,8 @@ namespace Savan
 
                 // Make sure zoom steps are with 25%
                 var index = 0.25 - (Zoom % 0.25);
-                    
-                if(index != 0)
+
+                if (index != 0)
                 {
                     Zoom += index;
                 }
@@ -915,8 +917,8 @@ namespace Savan
             }
         }
 
-		public void Drag(Point pt)
-		{
+        public void Drag(Point pt)
+        {
             try
             {
                 if (this.Image == null || IsDragging != true)
@@ -933,7 +935,7 @@ namespace Savan
                     // Now don't drag it out of the panel please
                     boundingRect.X = 0;
                 }
-                else if((pt.X - dragPoint.X < (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2)))
+                else if ((pt.X - dragPoint.X < (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2)))
                 {
                     // I am dragging it out of my panel. How many pixels do I have left?
                     if ((boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2) <= 0)
@@ -968,10 +970,10 @@ namespace Savan
             {
                 MessageBox.Show("ImageViewer error: " + ex.ToString());
             }
-		}
+        }
 
-		public void BeginDrag(Point pt)
-		{
+        public void BeginDrag(Point pt)
+        {
             try
             {
                 if (Image == null)
@@ -986,9 +988,9 @@ namespace Savan
             {
                 MessageBox.Show("ImageViewer error: " + ex.ToString());
             }
-		}
+        }
 
-		public void EndDrag()
+        public void EndDrag()
         {
             try
             {
@@ -1001,10 +1003,10 @@ namespace Savan
             {
                 MessageBox.Show("ImageViewer error: " + ex.ToString());
             }
-		}
+        }
 
-		public void Draw(Graphics g)
-		{
+        public void Draw(Graphics g)
+        {
             try
             {
                 if (multiFrame)
@@ -1050,6 +1052,23 @@ namespace Savan
             {
                 MessageBox.Show("ImageViewer error: " + ex.ToString());
             }
-		}
+        }
+
+        #endregion Public Members
+
+        #region Non Public Members
+
+        private int panelWidth => imageViewer.PanelWidth;
+
+        private int panelHeight => imageViewer.PanelHeight;
+
+        private ImageCodecInfo GetCodec(string type)
+        {
+            var info = ImageCodecInfo.GetImageEncoders();
+            return info.FirstOrDefault(codecInfo => codecInfo.FormatDescription.Equals(type));
+        }
+
+        #endregion Non Public Members
+
     }
 }
