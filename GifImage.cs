@@ -12,14 +12,14 @@ namespace Savan
     {
         #region Fields
 
-        private ImageViewerEx imageViewer;
-        private Image gif;
-        private FrameDimension dimension;
-        private int currentFrame;
-        private bool updating;
-        private Timer timer;
-        private double framesPerSecond;
-        private bool animationEnabled;
+        private ImageViewerEx _imageViewer;
+        private Image _gif;
+        private FrameDimension _dimension;
+        private int _currentFrame;
+        private bool _updating;
+        private Timer _timer;
+        private double _framesPerSecond;
+        private bool _animationEnabled;
 
         #endregion Fields
 
@@ -27,25 +27,25 @@ namespace Savan
 
         public GifImage(ImageViewerEx viewer, Image img, bool animation, double fps)
         {
-            updating = true;
-            imageViewer = viewer;
-            gif = img;
-            dimension = new FrameDimension(gif.FrameDimensionsList[0]);
-            FrameCount = gif.GetFrameCount(dimension);
-            gif.SelectActiveFrame(dimension, 0);
-            currentFrame = 0;
-            animationEnabled = animation;
+            _updating = true;
+            _imageViewer = viewer;
+            _gif = img;
+            _dimension = new FrameDimension(_gif.FrameDimensionsList[0]);
+            FrameCount = _gif.GetFrameCount(_dimension);
+            _gif.SelectActiveFrame(_dimension, 0);
+            _currentFrame = 0;
+            _animationEnabled = animation;
 
-            timer = new Timer();
+            _timer = new Timer();
 
-            updating = false;
+            _updating = false;
 
-            framesPerSecond = 1000.0 / fps; // 15 FPS
-            timer.Enabled = animationEnabled;
-            timer.Interval = framesPerSecond;
-            timer.Elapsed += timer_Elapsed;
+            _framesPerSecond = 1000.0 / fps; // 15 FPS
+            _timer.Enabled = _animationEnabled;
+            _timer.Interval = _framesPerSecond;
+            _timer.Elapsed += timer_Elapsed;
 
-            CurrentFrame = (Bitmap)gif;
+            CurrentFrame = (Bitmap)_gif;
             CurrentFrameSize = new Size(CurrentFrame.Size.Width, CurrentFrame.Size.Height);
         }
 
@@ -58,26 +58,26 @@ namespace Savan
         public void Dispose()
         {
             Lock();
-            timer.Enabled = false;
-            gif.Dispose();
-            gif = null;
+            _timer.Enabled = false;
+            _gif.Dispose();
+            _gif = null;
             Unlock();
 
-            timer.Dispose();
+            _timer.Dispose();
         }
 
         public double FPS
         {
-            get => (1000.0 / framesPerSecond);
+            get => (1000.0 / _framesPerSecond);
             set
             {
                 if (value <= 30.0 && value > 0.0)
                 {
-                    framesPerSecond = 1000.0 / value;
+                    _framesPerSecond = 1000.0 / value;
 
-                    if (timer != null)
+                    if (_timer != null)
                     {
-                        timer.Interval = framesPerSecond;
+                        _timer.Interval = _framesPerSecond;
                     }
                 }
             }
@@ -85,23 +85,23 @@ namespace Savan
 
         public bool AnimationEnabled
         {
-            get => animationEnabled;
+            get => _animationEnabled;
             set
             {
-                animationEnabled = value;
+                _animationEnabled = value;
 
-                if (timer != null)
+                if (_timer != null)
                 {
-                    timer.Enabled = animationEnabled;
+                    _timer.Enabled = _animationEnabled;
                 }
             }
         }
 
         public bool Lock()
         {
-            if (updating == false)
+            if (_updating == false)
             {
-                while (updating)
+                while (_updating)
                 {
                     // Wait
                 }
@@ -114,25 +114,25 @@ namespace Savan
 
         public void Unlock()
         {
-            updating = false;
+            _updating = false;
         }
 
         public void NextFrame()
         {
             try
             {
-                if (gif != null)
+                if (_gif != null)
                 {
                     if (Lock())
                     {
-                        lock (gif)
+                        lock (_gif)
                         {
-                            gif.SelectActiveFrame(dimension, currentFrame);
-                            currentFrame++;
+                            _gif.SelectActiveFrame(_dimension, _currentFrame);
+                            _currentFrame++;
 
-                            if (currentFrame >= FrameCount)
+                            if (_currentFrame >= FrameCount)
                             {
-                                currentFrame = 0;
+                                _currentFrame = 0;
                             }
 
                             OnFrameChanged();
@@ -171,10 +171,10 @@ namespace Savan
 
         private void OnFrameChanged()
         {
-            CurrentFrame = (Bitmap)gif;
+            CurrentFrame = (Bitmap)_gif;
             CurrentFrameSize = new Size(CurrentFrame.Size.Width, CurrentFrame.Size.Height);
 
-            imageViewer.InvalidatePanel();
+            _imageViewer.InvalidatePanel();
         }
 
         #endregion Non Public Members

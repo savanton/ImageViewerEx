@@ -12,14 +12,14 @@ namespace Savan
     {
         #region Fields
 
-        private ImageViewerEx imageViewer;
-        private	Rectangle boundingRect;
-		private	Point dragPoint;
-        private Bitmap bmp;
-        private Bitmap bmpPreview;
-        private MultiPageImage multiBmp;
-        private bool multiFrame;
-        private int rotation;
+        private ImageViewerEx _imageViewer;
+        private	Rectangle _boundingRect;
+		private	Point _dragPoint;
+        private Bitmap _bmp;
+        private Bitmap _bmpPreview;
+        private MultiPageImage _multiBmp;
+        private bool _multiFrame;
+        private int _rotation;
 
         #endregion Fields
 
@@ -29,14 +29,14 @@ namespace Savan
         {
             try
             {
-                imageViewer = viewer;
+                _imageViewer = viewer;
 
                 // Initial dragging to false and an Image.
                 IsDragging = false;
                 Image = bmp;
                 Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
 
-                boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+                _boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
             }
             catch (Exception ex)
             {
@@ -48,11 +48,11 @@ namespace Savan
         {
             try
             {
-                imageViewer = viewer;
+                _imageViewer = viewer;
                 // Initial dragging to false and No image.
                 IsDragging = false;
-                bmp = null;
-                multiBmp = null;
+                _bmp = null;
+                _multiBmp = null;
                 Gif = null;
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace Savan
 
         #region Public Members
 
-        public Rectangle BoundingBox => boundingRect;
+        public Rectangle BoundingBox => _boundingRect;
 
         public void Dispose()
         {
@@ -82,7 +82,7 @@ namespace Savan
             {
                 if (Image != null)
                 {
-                    if (multiFrame)
+                    if (_multiFrame)
                     {
                         if (Gif != null)
                         {
@@ -104,7 +104,7 @@ namespace Savan
             }
         }
 
-        public Size CurrentSize => new Size(boundingRect.Width, boundingRect.Height);
+        public Size CurrentSize => new Size(_boundingRect.Width, _boundingRect.Height);
 
         public bool MultiPage { get; private set; }
 
@@ -116,24 +116,24 @@ namespace Savan
 
         public int Rotation
         {
-            get => rotation;
+            get => _rotation;
             set
             {
                 // Making sure that the rotation is only 0, 90, 180 or 270 degrees!
                 if (value == 90 || value == 180 || value == 270 || value == 0)
                 {
-                    rotation = value;
+                    _rotation = value;
                 }
             }
         }
 
         public Bitmap GetPage(int pageNumber)
         {
-            var pages = multiBmp?.Image.GetFrameCount(FrameDimension.Page);
+            var pages = _multiBmp?.Image.GetFrameCount(FrameDimension.Page);
             if (pages > pageNumber && pageNumber >= 0)
             {
-                multiBmp.Image.SelectActiveFrame(FrameDimension.Page, pageNumber);
-                return new Bitmap(multiBmp.Image);
+                _multiBmp.Image.SelectActiveFrame(FrameDimension.Page, pageNumber);
+                return new Bitmap(_multiBmp.Image);
             }
 
             return null;
@@ -143,7 +143,7 @@ namespace Savan
         {
             get
             {
-                if (multiFrame)
+                if (_multiFrame)
                 {
                     if (Gif != null)
                     {
@@ -166,7 +166,7 @@ namespace Savan
         {
             get
             {
-                if (multiFrame)
+                if (_multiFrame)
                 {
                     if (Gif != null)
                     {
@@ -189,10 +189,10 @@ namespace Savan
         {
             get
             {
-                if (multiFrame)
+                if (_multiFrame)
                     return Gif.CurrentFrame;
 
-                return MultiPage ? multiBmp?.Page : bmp;
+                return MultiPage ? _multiBmp?.Page : _bmp;
             }
             set
             {
@@ -203,15 +203,15 @@ namespace Savan
                     CurrentPage = 0;
 
                     // No memory leaks here!
-                    bmp?.Dispose();
-                    bmp = null;
+                    _bmp?.Dispose();
+                    _bmp = null;
 
-                    multiBmp?.Dispose();
-                    multiBmp = null;
+                    _multiBmp?.Dispose();
+                    _multiBmp = null;
 
                     Pages = 1;
                     MultiPage = false;
-                    multiFrame = false;
+                    _multiFrame = false;
 
                     if (value.RawFormat.Equals(ImageFormat.Tiff))
                     {
@@ -235,61 +235,61 @@ namespace Savan
                             {
                                 var gifDimension = new FrameDimension(value.FrameDimensionsList[0]);
                                 var gifFrames = value.GetFrameCount(gifDimension);
-                                multiFrame = gifFrames > 1;
+                                _multiFrame = gifFrames > 1;
                             }
                             catch
                             {
-                                multiFrame = false;
+                                _multiFrame = false;
                             }
                         }
                     }
 
-                    if (multiFrame)
+                    if (_multiFrame)
                     {
-                        Gif = new GifImage(imageViewer, value, imageViewer.GifAnimation, imageViewer.GifFPS);
+                        Gif = new GifImage(_imageViewer, value, _imageViewer.GifAnimation, _imageViewer.GifFPS);
                     }
                     else if (MultiPage)
                     {
-                        bmp = null;
-                        multiBmp = new MultiPageImage(value);
+                        _bmp = null;
+                        _multiBmp = new MultiPageImage(value);
                     }
                     else
                     {
-                        bmp = value;
-                        multiBmp = null;
+                        _bmp = value;
+                        _multiBmp = null;
                     }
 
                     // Initial rotation adjustments
-                    if (rotation != 0)
+                    if (_rotation != 0)
                     {
-                        if (rotation == 180)
+                        if (_rotation == 180)
                         {
                             Image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                            boundingRect = new Rectangle(0, 0, (int)(this.ImageWidth * Zoom), (int)(this.ImageHeight * Zoom));
+                            _boundingRect = new Rectangle(0, 0, (int)(this.ImageWidth * Zoom), (int)(this.ImageHeight * Zoom));
                         }
                         else
                         {
-                            if (rotation == 90)
+                            if (_rotation == 90)
                             {
                                 Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
                             }
-                            else if (rotation == 270)
+                            else if (_rotation == 270)
                             {
                                 Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
                             }
 
                             // Flip the X and Y values
-                            boundingRect = new Rectangle(0, 0, (int)(ImageHeight * Zoom), (int)(ImageWidth * Zoom));
+                            _boundingRect = new Rectangle(0, 0, (int)(ImageHeight * Zoom), (int)(ImageWidth * Zoom));
                         }
                     }
                     else
                     {
                         Image.RotateFlip(RotateFlipType.RotateNoneFlipNone);
-                        boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+                        _boundingRect = new Rectangle(0, 0, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
                     }
 
                     Zoom = 1.0;
-                    bmpPreview = CreatePreviewImage();
+                    _bmpPreview = CreatePreviewImage();
                     FitToScreen();
                 }
                 catch (Exception ex)
@@ -299,7 +299,7 @@ namespace Savan
             }
         }
 
-        public Image PreviewImage => bmpPreview;
+        public Image PreviewImage => _bmpPreview;
 
         public string ImagePath
         {
@@ -335,14 +335,14 @@ namespace Savan
                 {
                     CurrentPage = p;
 
-                    multiBmp.SetPage(p);
-                    multiBmp.Rotate(this.rotation);
+                    _multiBmp.SetPage(p);
+                    _multiBmp.Rotate(this._rotation);
 
                     // No memory leaks here!
-                    bmpPreview?.Dispose();
-                    bmpPreview = null;
+                    _bmpPreview?.Dispose();
+                    _bmpPreview = null;
 
-                    bmpPreview = CreatePreviewImage();
+                    _bmpPreview = CreatePreviewImage();
                     AvoidOutOfScreen();
                 }
             }
@@ -365,14 +365,14 @@ namespace Savan
                 {
                     CurrentPage = nextPage;
 
-                    multiBmp.SetPage(CurrentPage);
-                    multiBmp.Rotate(rotation);
+                    _multiBmp.SetPage(CurrentPage);
+                    _multiBmp.Rotate(_rotation);
 
                     // No memory leaks here!
-                    bmpPreview?.Dispose();
-                    bmpPreview = null;
+                    _bmpPreview?.Dispose();
+                    _bmpPreview = null;
 
-                    bmpPreview = CreatePreviewImage();
+                    _bmpPreview = CreatePreviewImage();
                     AvoidOutOfScreen();
                 }
             }
@@ -395,14 +395,14 @@ namespace Savan
                 {
                     CurrentPage = prevPage;
 
-                    multiBmp.SetPage(CurrentPage);
-                    multiBmp.Rotate(rotation);
+                    _multiBmp.SetPage(CurrentPage);
+                    _multiBmp.Rotate(_rotation);
 
                     // No memory leaks here!
-                    bmpPreview?.Dispose();
-                    bmpPreview = null;
+                    _bmpPreview?.Dispose();
+                    _bmpPreview = null;
 
-                    bmpPreview = CreatePreviewImage();
+                    _bmpPreview = CreatePreviewImage();
                     AvoidOutOfScreen();
                 }
             }
@@ -434,21 +434,21 @@ namespace Savan
                         break;
                 }
 
-                int tempWidth = boundingRect.Width;
-                int tempHeight = boundingRect.Height;
+                int tempWidth = _boundingRect.Width;
+                int tempHeight = _boundingRect.Height;
 
-                boundingRect.Width = tempHeight;
-                boundingRect.Height = tempWidth;
+                _boundingRect.Width = tempHeight;
+                _boundingRect.Height = tempWidth;
 
-                rotation = (rotation + angle) % 360;
+                _rotation = (_rotation + angle) % 360;
 
-                if (multiFrame)
+                if (_multiFrame)
                 {
                     Gif.Rotate(angle);
                 }
                 else if (MultiPage)
                 {
-                    multiBmp?.Rotate(angle);
+                    _multiBmp?.Rotate(angle);
                 }
                 else
                 {
@@ -458,10 +458,10 @@ namespace Savan
                 AvoidOutOfScreen();
 
                 // No memory leaks here!
-                bmpPreview?.Dispose();
-                bmpPreview = null;
+                _bmpPreview?.Dispose();
+                _bmpPreview = null;
 
-                bmpPreview = CreatePreviewImage();
+                _bmpPreview = CreatePreviewImage();
             }
             catch (Exception ex)
             {
@@ -553,7 +553,7 @@ namespace Savan
 
             var previewBmp = new Bitmap(previewRect.Width, previewRect.Height);
 
-            if (multiFrame)
+            if (_multiFrame)
             {
                 if (Gif != null)
                 {
@@ -593,8 +593,8 @@ namespace Savan
             var height = selection.Height;
 
             // So, where did my selection start on the entire picture?
-            var selectedX = (int)((double)(((double)boundingRect.X - ((double)boundingRect.X * 2)) + (double)x) / Zoom);
-            var selectedY = (int)((double)(((double)boundingRect.Y - ((double)boundingRect.Y * 2)) + (double)y) / Zoom);
+            var selectedX = (int)((double)(((double)_boundingRect.X - ((double)_boundingRect.X * 2)) + (double)x) / Zoom);
+            var selectedY = (int)((double)(((double)_boundingRect.Y - ((double)_boundingRect.Y * 2)) + (double)y) / Zoom);
             var selectedWidth = width;
             var selectedHeight = height;
 
@@ -606,8 +606,8 @@ namespace Savan
             }
 
             // What is the highest possible zoomrate?
-            var zoomX = ((double)panelWidth / (double)selectedWidth);
-            var zoomY = ((double)panelHeight / (double)selectedHeight);
+            var zoomX = ((double)PanelWidth / (double)selectedWidth);
+            var zoomY = ((double)PanelHeight / (double)selectedHeight);
 
             var newZoom = Math.Min(zoomX, zoomY);
 
@@ -622,17 +622,17 @@ namespace Savan
                 // Center the selected area
                 var offsetX = 0;
                 var offsetY = 0;
-                if (selectedWidth < panelWidth)
+                if (selectedWidth < PanelWidth)
                 {
-                    offsetX = (panelWidth - selectedWidth) / 2;
+                    offsetX = (PanelWidth - selectedWidth) / 2;
                 }
-                if (selectedHeight < panelHeight)
+                if (selectedHeight < PanelHeight)
                 {
-                    offsetY = (panelHeight - selectedHeight) / 2;
+                    offsetY = (PanelHeight - selectedHeight) / 2;
                 }
 
-                boundingRect.X = (int)((int)((double)selectedX * newZoom) - ((int)((double)selectedX * newZoom) * 2)) + offsetX;
-                boundingRect.Y = (int)((int)((double)selectedY * newZoom) - ((int)((double)selectedY * newZoom) * 2)) + offsetY;
+                _boundingRect.X = (int)((int)((double)selectedX * newZoom) - ((int)((double)selectedX * newZoom) * 2)) + offsetX;
+                _boundingRect.Y = (int)((int)((double)selectedY * newZoom) - ((int)((double)selectedY * newZoom) * 2)) + offsetY;
 
                 AvoidOutOfScreen();
             }
@@ -642,7 +642,7 @@ namespace Savan
         {
             try
             {
-                var zoom = (double)boundingRect.Width / (double)width;
+                var zoom = (double)_boundingRect.Width / (double)width;
 
                 var originX = (int)(x * zoom);
                 var originY = (int)(y * zoom);
@@ -650,8 +650,8 @@ namespace Savan
                 originX -= (originX * 2);
                 originY -= (originY * 2);
 
-                boundingRect.X = originX + (pWidth / 2);
-                boundingRect.Y = originY + (pHeight / 2);
+                _boundingRect.X = originX + (pWidth / 2);
+                _boundingRect.Y = originY + (pHeight / 2);
 
                 AvoidOutOfScreen();
             }
@@ -665,8 +665,8 @@ namespace Savan
         {
             try
             {
-                boundingRect.X = (x - (width / 2)) - ((x - (width / 2)) * 2);
-                boundingRect.Y = (y - (height / 2)) - ((y - (height / 2)) * 2);
+                _boundingRect.X = (x - (width / 2)) - ((x - (width / 2)) * 2);
+                _boundingRect.Y = (y - (height / 2)) - ((y - (height / 2)) * 2);
 
                 AvoidOutOfScreen();
             }
@@ -680,31 +680,31 @@ namespace Savan
         {
             try
             {
-                var zoomX = (double)width / (double)boundingRect.Width;
-                var zoomY = (double)height / (double)boundingRect.Height;
+                var zoomX = (double)width / (double)_boundingRect.Width;
+                var zoomY = (double)height / (double)_boundingRect.Height;
 
-                if (width > panelWidth)
+                if (width > PanelWidth)
                 {
-                    var oldX = (boundingRect.X - (boundingRect.X * 2)) + (panelWidth / 2);
-                    var oldY = (boundingRect.Y - (boundingRect.Y * 2)) + (panelHeight / 2);
+                    var oldX = (_boundingRect.X - (_boundingRect.X * 2)) + (PanelWidth / 2);
+                    var oldY = (_boundingRect.Y - (_boundingRect.Y * 2)) + (PanelHeight / 2);
 
                     var newX = (int)(oldX * zoomX);
                     var newY = (int)(oldY * zoomY);
 
-                    var originX = newX - (panelWidth / 2) - ((newX - (panelWidth / 2)) * 2);
-                    var originY = newY - (panelHeight / 2) - ((newY - (panelHeight / 2)) * 2);
+                    var originX = newX - (PanelWidth / 2) - ((newX - (PanelWidth / 2)) * 2);
+                    var originY = newY - (PanelHeight / 2) - ((newY - (PanelHeight / 2)) * 2);
 
                     return new Point(originX, originY);
                 }
                 else
                 {
-                    if (height > panelHeight)
+                    if (height > PanelHeight)
                     {
-                        var oldY = (boundingRect.Y - (boundingRect.Y * 2)) + (panelHeight / 2);
+                        var oldY = (_boundingRect.Y - (_boundingRect.Y * 2)) + (PanelHeight / 2);
 
                         var newY = (int)(oldY * zoomY);
 
-                        var originY = newY - (panelHeight / 2) - ((newY - (panelHeight / 2)) * 2);
+                        var originY = newY - (PanelHeight / 2) - ((newY - (PanelHeight / 2)) * 2);
 
                         return new Point(0, originY);
                     }
@@ -776,18 +776,18 @@ namespace Savan
 
         public void SetPosition(int x, int y)
         {
-            boundingRect.X = -x;
-            boundingRect.Y = -y;
+            _boundingRect.X = -x;
+            _boundingRect.Y = -y;
         }
 
         public void SetPositionX(int x)
         {
-            boundingRect.X = -x;
+            _boundingRect.X = -x;
         }
 
         public void SetPositionY(int y)
         {
-            boundingRect.Y = -y;
+            _boundingRect.Y = -y;
         }
 
         public void SetZoom(double z)
@@ -799,9 +799,9 @@ namespace Savan
 
                 Zoom = z;
 
-                var p = PointToOrigin(boundingRect.X, boundingRect.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+                var p = PointToOrigin(_boundingRect.X, _boundingRect.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
 
-                boundingRect = new Rectangle(p.X, p.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
+                _boundingRect = new Rectangle(p.X, p.Y, (int)(ImageWidth * Zoom), (int)(ImageHeight * Zoom));
                 AvoidOutOfScreen();
             }
             catch (Exception ex)
@@ -839,29 +839,29 @@ namespace Savan
                 if (Image == null)
                     return;
 
-                var x_ratio = (double)panelWidth / (double)ImageWidth;
-                var y_ratio = (double)panelHeight / (double)ImageHeight;
+                var x_ratio = (double)PanelWidth / (double)ImageWidth;
+                var y_ratio = (double)PanelHeight / (double)ImageHeight;
 
-                if ((ImageWidth <= panelWidth) && (ImageHeight <= panelHeight))
+                if ((ImageWidth <= PanelWidth) && (ImageHeight <= PanelHeight))
                 {
-                    boundingRect.Width = ImageWidth;
-                    boundingRect.Height = ImageHeight;
+                    _boundingRect.Width = ImageWidth;
+                    _boundingRect.Height = ImageHeight;
                 }
-                else if ((x_ratio * ImageHeight) < panelHeight)
+                else if ((x_ratio * ImageHeight) < PanelHeight)
                 {
-                    boundingRect.Height = Convert.ToInt32(Math.Ceiling(x_ratio * ImageHeight));
-                    boundingRect.Width = panelWidth;
+                    _boundingRect.Height = Convert.ToInt32(Math.Ceiling(x_ratio * ImageHeight));
+                    _boundingRect.Width = PanelWidth;
                 }
                 else
                 {
-                    boundingRect.Width = Convert.ToInt32(Math.Ceiling(y_ratio * ImageWidth));
-                    boundingRect.Height = panelHeight;
+                    _boundingRect.Width = Convert.ToInt32(Math.Ceiling(y_ratio * ImageWidth));
+                    _boundingRect.Height = PanelHeight;
                 }
 
-                boundingRect.X = 0;
-                boundingRect.Y = 0;
+                _boundingRect.X = 0;
+                _boundingRect.Y = 0;
 
-                Zoom = ((double)boundingRect.Width / (double)ImageWidth);
+                Zoom = ((double)_boundingRect.Width / (double)ImageWidth);
             }
             catch (Exception ex)
             {
@@ -874,40 +874,40 @@ namespace Savan
             try
             {
                 // Am I lined out to the left?
-                if (boundingRect.X >= 0)
+                if (_boundingRect.X >= 0)
                 {
-                    boundingRect.X = 0;
+                    _boundingRect.X = 0;
                 }
-                else if ((boundingRect.X <= (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2)))
+                else if ((_boundingRect.X <= (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)))
                 {
-                    if ((boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2) <= 0)
+                    if ((_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2) <= 0)
                     {
                         // I am too far to the left!
-                        boundingRect.X = (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2);
+                        _boundingRect.X = (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2);
                     }
                     else
                     {
                         // I am too far to the right!
-                        boundingRect.X = 0;
+                        _boundingRect.X = 0;
                     }
                 }
 
                 // Am I lined out to the top?
-                if (boundingRect.Y >= 0)
+                if (_boundingRect.Y >= 0)
                 {
-                    boundingRect.Y = 0;
+                    _boundingRect.Y = 0;
                 }
-                else if ((boundingRect.Y <= (boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2)))
+                else if ((_boundingRect.Y <= (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2)))
                 {
-                    if ((boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2) <= 0)
+                    if ((_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) <= 0)
                     {
                         // I am too far to the top!
-                        boundingRect.Y = (boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2);
+                        _boundingRect.Y = (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2);
                     }
                     else
                     {
                         // I am too far to the bottom!
-                        boundingRect.Y = 0;
+                        _boundingRect.Y = 0;
                     }
                 }
             }
@@ -925,44 +925,44 @@ namespace Savan
                     return;
 
                 // Am I dragging it outside of the panel?
-                if ((pt.X - dragPoint.X > (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2)) && (pt.X - dragPoint.X < 0))
+                if ((pt.X - _dragPoint.X > (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)) && (pt.X - _dragPoint.X < 0))
                 {
                     // No, everything is just fine
-                    boundingRect.X = pt.X - dragPoint.X;
+                    _boundingRect.X = pt.X - _dragPoint.X;
                 }
-                else if ((pt.X - dragPoint.X > 0))
+                else if ((pt.X - _dragPoint.X > 0))
                 {
                     // Now don't drag it out of the panel please
-                    boundingRect.X = 0;
+                    _boundingRect.X = 0;
                 }
-                else if ((pt.X - dragPoint.X < (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2)))
+                else if ((pt.X - _dragPoint.X < (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2)))
                 {
                     // I am dragging it out of my panel. How many pixels do I have left?
-                    if ((boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2) <= 0)
+                    if ((_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2) <= 0)
                     {
                         // Make it fit perfectly
-                        boundingRect.X = (boundingRect.Width - panelWidth) - ((boundingRect.Width - panelWidth) * 2);
+                        _boundingRect.X = (_boundingRect.Width - PanelWidth) - ((_boundingRect.Width - PanelWidth) * 2);
                     }
                 }
 
                 // Am I dragging it outside of the panel?
-                if (pt.Y - dragPoint.Y > (boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2) && (pt.Y - dragPoint.Y < 0))
+                if (pt.Y - _dragPoint.Y > (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) && (pt.Y - _dragPoint.Y < 0))
                 {
                     // No, everything is just fine
-                    boundingRect.Y = pt.Y - dragPoint.Y;
+                    _boundingRect.Y = pt.Y - _dragPoint.Y;
                 }
-                else if ((pt.Y - dragPoint.Y > 0))
+                else if ((pt.Y - _dragPoint.Y > 0))
                 {
                     // Now don't drag it out of the panel please
-                    boundingRect.Y = 0;
+                    _boundingRect.Y = 0;
                 }
-                else if (pt.Y - dragPoint.Y < (boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2))
+                else if (pt.Y - _dragPoint.Y < (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2))
                 {
                     // I am dragging it out of my panel. How many pixels do I have left?
-                    if ((boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2) <= 0)
+                    if ((_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2) <= 0)
                     {
                         // Make it fit perfectly
-                        boundingRect.Y = (boundingRect.Height - panelHeight) - ((boundingRect.Height - panelHeight) * 2);
+                        _boundingRect.Y = (_boundingRect.Height - PanelHeight) - ((_boundingRect.Height - PanelHeight) * 2);
                     }
                 }
             }
@@ -980,8 +980,8 @@ namespace Savan
                     return;
 
                 // Initial drag position
-                dragPoint.X = pt.X - boundingRect.X;
-                dragPoint.Y = pt.Y - boundingRect.Y;
+                _dragPoint.X = pt.X - _boundingRect.X;
+                _dragPoint.Y = pt.Y - _boundingRect.Y;
                 IsDragging = true;
             }
             catch (Exception ex)
@@ -1009,7 +1009,7 @@ namespace Savan
         {
             try
             {
-                if (multiFrame)
+                if (_multiFrame)
                 {
                     if (Gif.CurrentFrame != null)
                     {
@@ -1020,13 +1020,13 @@ namespace Savan
                                 if (Gif.Rotation != 0)
                                 {
                                     var rotated = RotateCenter(Gif.CurrentFrame, Gif.Rotation);
-                                    g.DrawImage(rotated, boundingRect);
+                                    g.DrawImage(rotated, _boundingRect);
 
                                     rotated.Dispose();
                                 }
                                 else
                                 {
-                                    g.DrawImage(Gif.CurrentFrame, boundingRect);
+                                    g.DrawImage(Gif.CurrentFrame, _boundingRect);
                                 }
                             }
                         }
@@ -1035,16 +1035,16 @@ namespace Savan
                 }
                 if (MultiPage)
                 {
-                    if (multiBmp?.Image != null)
+                    if (_multiBmp?.Image != null)
                     {
-                        g.DrawImage(multiBmp.Image, boundingRect);
+                        g.DrawImage(_multiBmp.Image, _boundingRect);
                     }
                 }
                 else
                 {
-                    if (bmp != null)
+                    if (_bmp != null)
                     {
-                        g.DrawImage(bmp, boundingRect);
+                        g.DrawImage(_bmp, _boundingRect);
                     }
                 }
             }
@@ -1058,9 +1058,9 @@ namespace Savan
 
         #region Non Public Members
 
-        private int panelWidth => imageViewer.PanelWidth;
+        private int PanelWidth => _imageViewer.PanelWidth;
 
-        private int panelHeight => imageViewer.PanelHeight;
+        private int PanelHeight => _imageViewer.PanelHeight;
 
         private ImageCodecInfo GetCodec(string type)
         {

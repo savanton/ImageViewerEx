@@ -38,23 +38,23 @@ namespace Savan
 
         #region Fields
 
-        private DrawObject drawing;
+        private DrawObject _drawing;
 
-        private bool isScrolling;
-        private bool scrollbars;
-        private double fps = 15.0;
-        private bool animationEnabled;
-        private bool selectMode;
-        private bool shiftSelecting;
-        private Point ptSelectionStart;
-        private Point ptSelectionEnd;
+        private bool _isScrolling;
+        private bool _scrollbars;
+        private double _fps = 15.0;
+        private bool _animationEnabled;
+        private bool _selectMode;
+        private bool _shiftSelecting;
+        private Point _ptSelectionStart;
+        private Point _ptSelectionEnd;
 
-        private bool panelDragging;
-        private bool showPreview = true;
-        private Cursor grabCursor;
-        private Cursor dragCursor;
+        private bool _panelDragging;
+        private bool _showPreview = true;
+        private Cursor _grabCursor;
+        private Cursor _dragCursor;
 
-        private Bitmap preview;
+        private Bitmap _preview;
 
         #endregion Fields
 
@@ -63,7 +63,7 @@ namespace Savan
         public ImageViewerEx()
         {
             // DrawObject initialization
-            drawing = new DrawObject(this);
+            _drawing = new DrawObject(this);
 
             try
             {
@@ -74,7 +74,7 @@ namespace Savan
                 {
                     if (imgStream != null)
                     {
-                        grabCursor = new Cursor(imgStream);
+                        _grabCursor = new Cursor(imgStream);
                     }
                 }
 
@@ -82,7 +82,7 @@ namespace Savan
                 {
                     if (imgStream != null)
                     {
-                        dragCursor = new Cursor(imgStream);
+                        _dragCursor = new Cursor(imgStream);
                     }
                 }
             }
@@ -114,10 +114,10 @@ namespace Savan
 
         public bool Scrollbars
         {
-            get => scrollbars;
+            get => _scrollbars;
             set
             {
-                scrollbars = value;
+                _scrollbars = value;
                 DisplayScrollbars();
                 SetScrollbarValues();
             }
@@ -125,15 +125,15 @@ namespace Savan
 
         public double GifFPS
         {
-            get => fps;
+            get => _fps;
             set
             {
                 if (value <= 30.0 && value > 0.0)
                 {
-                    fps = value;
-                    if (drawing.Gif != null)
+                    _fps = value;
+                    if (_drawing.Gif != null)
                     {
-                        drawing.Gif.FPS = fps;
+                        _drawing.Gif.FPS = _fps;
                     }
                 }
             }
@@ -141,13 +141,13 @@ namespace Savan
 
         public bool GifAnimation
         {
-            get => animationEnabled;
+            get => _animationEnabled;
             set
             {
-                animationEnabled = value;
-                if (drawing.Gif != null)
+                _animationEnabled = value;
+                if (_drawing.Gif != null)
                 {
-                    drawing.Gif.AnimationEnabled = animationEnabled;
+                    _drawing.Gif.AnimationEnabled = _animationEnabled;
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace Savan
 
         public double Zoom
         {
-            get => Math.Round(drawing.Zoom * 100, 0);
+            get => Math.Round(_drawing.Zoom * 100, 0);
             set
             {
                 if (value > 0)
@@ -207,7 +207,7 @@ namespace Savan
                     // Make it a double!
                     var zoomDouble = (double)value / (double)100;
 
-                    drawing.SetZoom(zoomDouble);
+                    _drawing.SetZoom(zoomDouble);
                     UpdatePanels(true);
 
                     btnZoomIn.Focus();
@@ -215,9 +215,9 @@ namespace Savan
             }
         }
 
-        public Size OriginalSize => drawing.OriginalSize;
+        public Size OriginalSize => _drawing.OriginalSize;
 
-        public Size CurrentSize => drawing.CurrentSize;
+        public Size CurrentSize => _drawing.CurrentSize;
 
         public Color MenuColor
         {
@@ -286,7 +286,7 @@ namespace Savan
         {
             set
             {
-                drawing.ImagePath = value;
+                _drawing.ImagePath = value;
 
                 UpdatePanels(true);
                 ToggleMultiPage();
@@ -299,10 +299,10 @@ namespace Savan
 
         public Bitmap Image
         {
-            get => drawing.Image;
+            get => _drawing.Image;
             set
             {
-                drawing.Image = value;
+                _drawing.Image = value;
 
                 UpdatePanels(true);
                 ToggleMultiPage();
@@ -315,25 +315,25 @@ namespace Savan
 
         public int Rotation
         {
-            get => drawing.Rotation;
+            get => _drawing.Rotation;
             set
             {
                 // Making sure the rotation is 0, 90, 180 or 270 degrees!
                 if (value == 90 || value == 180 || value == 270 || value == 0)
                 {
-                    drawing.Rotation = value;
+                    _drawing.Rotation = value;
                 }
             }
         }
 
         public bool ShowPreview
         {
-            get => showPreview;
+            get => _showPreview;
             set
             {
-                if (showPreview != value)
+                if (_showPreview != value)
                 {
-                    showPreview = value;
+                    _showPreview = value;
                     Preview();
                 }
             }
@@ -341,7 +341,7 @@ namespace Savan
 
         public void InitControl()
         {
-            if (!scrollbars)
+            if (!_scrollbars)
             {
                 sbHoriz.Visible = false;
                 sbVert.Visible = false;
@@ -351,12 +351,12 @@ namespace Savan
 
         public void Rotate90()
         {
-            if (drawing != null)
+            if (_drawing != null)
             {
-                drawing.Rotate(RotateFlipType.Rotate90FlipNone);
+                _drawing.Rotate(RotateFlipType.Rotate90FlipNone);
 
                 // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
                 UpdatePanels(true);
                 ToggleMultiPage();
             }
@@ -364,12 +364,12 @@ namespace Savan
 
         public void Rotate180()
         {
-            if (drawing != null)
+            if (_drawing != null)
             {
-                drawing.Rotate(RotateFlipType.Rotate180FlipNone);
+                _drawing.Rotate(RotateFlipType.Rotate180FlipNone);
 
                 // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
                 UpdatePanels(true);
                 ToggleMultiPage();
             }
@@ -377,12 +377,12 @@ namespace Savan
 
         public void Rotate270()
         {
-            if (drawing != null)
+            if (_drawing != null)
             {
-                drawing.Rotate(RotateFlipType.Rotate270FlipNone);
+                _drawing.Rotate(RotateFlipType.Rotate270FlipNone);
 
                 // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
                 UpdatePanels(true);
                 ToggleMultiPage();
             }
@@ -390,7 +390,7 @@ namespace Savan
 
         public void FitToScreen()
         {
-            drawing.FitToScreen();
+            _drawing.FitToScreen();
             UpdatePanels(true);
         }
 
@@ -439,16 +439,16 @@ namespace Savan
             // Hide preview panel mechanics
             // Making sure that UpdatePanels doesn't get called when it's hidden!
 
-            if (showPreview != pbPanel.Visible)
+            if (_showPreview != pbPanel.Visible)
             {
-                if (showPreview == false)
+                if (_showPreview == false)
                 {
                     panelPreview.Hide();
                     pbPanel.Hide();
 
                     pbFull.Width = pbFull.Width + (4 + panelPreview.Width);
 
-                    if (drawing.MultiPage)
+                    if (_drawing.MultiPage)
                     {
                         panelNavigation.Location = panelPreview.Location;
                     }
@@ -458,7 +458,7 @@ namespace Savan
                     }
 
                     InitControl();
-                    drawing.AvoidOutOfScreen();
+                    _drawing.AvoidOutOfScreen();
                     pbFull.Refresh();
                 }
                 else
@@ -468,7 +468,7 @@ namespace Savan
 
                     pbFull.Width = pbFull.Width - (4 + panelPreview.Width);
 
-                    if (drawing.MultiPage)
+                    if (_drawing.MultiPage)
                     {
                         panelNavigation.Location = new Point(panelPreview.Location.X, (pbPanel.Location.Y + (pbPanel.Size.Height + 5)));
                     }
@@ -478,7 +478,7 @@ namespace Savan
                     }
                                         
                     InitControl();
-                    drawing.AvoidOutOfScreen();
+                    _drawing.AvoidOutOfScreen();
                     pbFull.Refresh();
 
                     UpdatePanels(true);
@@ -489,8 +489,8 @@ namespace Savan
         private void DisposeControl()
         {
             // No memory leaks here
-            drawing?.Dispose();
-            preview?.Dispose();
+            _drawing?.Dispose();
+            _preview?.Dispose();
         }
 
         private void FocusOnMe()
@@ -501,7 +501,7 @@ namespace Savan
 
         private void DisplayScrollbars()
         {
-            if (scrollbars)
+            if (_scrollbars)
             {
                 if (this.Image != null)
                 {
@@ -562,11 +562,11 @@ namespace Savan
 
         private void SetScrollbarValues()
         {
-            if (scrollbars)
+            if (_scrollbars)
             {
                 if (sbHoriz.Visible)
                 {
-                    isScrolling = true;
+                    _isScrolling = true;
                     double perPercent = (double)this.CurrentSize.Width / 101.0;
                     double totalPercent = (double)this.pbFull.Width / perPercent;
 
@@ -574,7 +574,7 @@ namespace Savan
                     sbHoriz.Maximum = 100;
                     sbHoriz.LargeChange = Convert.ToInt32(Math.Round(totalPercent, 0));
 
-                    double value = (double)((-this.drawing.BoundingBox.X) / perPercent);
+                    double value = (double)((-this._drawing.BoundingBox.X) / perPercent);
 
                     if (value > sbHoriz.Maximum) { sbHoriz.Value = (sbHoriz.Maximum - sbHoriz.LargeChange) + ((sbHoriz.LargeChange > 0) ? 1 : 0); }
                     else if (value < 0) { sbHoriz.Value = 0; }
@@ -582,12 +582,12 @@ namespace Savan
                     {
                         sbHoriz.Value = Convert.ToInt32(Math.Round(value, 0));
                     }
-                    isScrolling = false;
+                    _isScrolling = false;
                 }
 
                 if (sbVert.Visible)
                 {
-                    isScrolling = true;
+                    _isScrolling = true;
                     double perPercent = (double)this.CurrentSize.Height / 101.0;
                     double totalPercent = (double)this.pbFull.Height / perPercent;
 
@@ -595,7 +595,7 @@ namespace Savan
                     sbVert.Maximum = 100;
                     sbVert.LargeChange = Convert.ToInt32(Math.Round(totalPercent, 0));
 
-                    double value = (double)((-this.drawing.BoundingBox.Y) / perPercent);
+                    double value = (double)((-this._drawing.BoundingBox.Y) / perPercent);
 
                     if (value > sbVert.Maximum) { sbVert.Value = (sbVert.Maximum - sbVert.LargeChange) + ((sbVert.LargeChange > 0) ? 1 : 0); }
                     else if (value < 0) { sbVert.Value = 0; }
@@ -603,7 +603,7 @@ namespace Savan
                     {
                         sbVert.Value = Convert.ToInt32(Math.Round(value, 0));
                     }
-                    isScrolling = false;
+                    _isScrolling = false;
                 }
             }
             else
@@ -626,9 +626,9 @@ namespace Savan
 
         private void ToggleMultiPage()
         {
-            if (drawing.MultiPage)
+            if (_drawing.MultiPage)
             {
-                if (!showPreview)
+                if (!_showPreview)
                 {
                     panelNavigation.Location = panelPreview.Location;
 
@@ -644,12 +644,12 @@ namespace Savan
                 }
 
                 panelNavigation.Show();
-                lblNavigation.Text = "/ " + drawing.Pages.ToString();
-                tbNavigation.Text = (drawing.CurrentPage + 1).ToString();
+                lblNavigation.Text = "/ " + _drawing.Pages.ToString();
+                tbNavigation.Text = (_drawing.CurrentPage + 1).ToString();
             }
             else
             {
-                if (!showPreview)
+                if (!_showPreview)
                 {
                     panelMenu.Width = panelPreview.Right - 2;
                 }
@@ -667,14 +667,14 @@ namespace Savan
         private void ImageViewerEx_Resize(object sender, EventArgs e)
         {
             InitControl();
-            drawing.AvoidOutOfScreen();
+            _drawing.AvoidOutOfScreen();
             UpdatePanels(true);
         }
 
         private void pbFull_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.FillRectangle(new SolidBrush(pbFull.BackColor), e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
-            drawing.Draw(e.Graphics);
+            _drawing.Draw(e.Graphics);
         }
 
         private void pbFull_MouseDown(object sender, MouseEventArgs e)
@@ -682,30 +682,30 @@ namespace Savan
             if (e.Button == MouseButtons.Left)
             {
                 // Left Shift or Right Shift pressed? Or is select mode one?
-                if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || selectMode == true)
+                if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || _selectMode == true)
                 {
                     // Fancy cursor
                     pbFull.Cursor = Cursors.Cross;
 
-                    shiftSelecting = true;
+                    _shiftSelecting = true;
 
                     // Initial selection
-                    ptSelectionStart.X = e.X;
-                    ptSelectionStart.Y = e.Y;
+                    _ptSelectionStart.X = e.X;
+                    _ptSelectionStart.Y = e.Y;
 
                     // No selection end
-                    ptSelectionEnd.X = -1;
-                    ptSelectionEnd.Y = -1;
+                    _ptSelectionEnd.X = -1;
+                    _ptSelectionEnd.Y = -1;
                 }
                 else
                 {
                     // Start dragging
-                    drawing.BeginDrag(new Point(e.X, e.Y));
+                    _drawing.BeginDrag(new Point(e.X, e.Y));
 
                     // Fancy cursor
-                    if (grabCursor != null)
+                    if (_grabCursor != null)
                     {
-                        pbFull.Cursor = grabCursor;
+                        pbFull.Cursor = _grabCursor;
                     }
                 }
             }
@@ -714,25 +714,25 @@ namespace Savan
         private void pbFull_MouseUp(object sender, MouseEventArgs e)
         {
             // Am i dragging or selecting?
-            if (shiftSelecting == true)
+            if (_shiftSelecting == true)
             {
                 // Calculate my selection rectangle
-                Rectangle rect = CalculateReversibleRectangle(ptSelectionStart, ptSelectionEnd);
+                Rectangle rect = CalculateReversibleRectangle(_ptSelectionStart, _ptSelectionEnd);
 
                 // Clear the selection rectangle
-                ptSelectionEnd.X = -1;
-                ptSelectionEnd.Y = -1;
-                ptSelectionStart.X = -1;
-                ptSelectionStart.Y = -1;
+                _ptSelectionEnd.X = -1;
+                _ptSelectionEnd.Y = -1;
+                _ptSelectionStart.X = -1;
+                _ptSelectionStart.Y = -1;
 
                 // Stop selecting
-                shiftSelecting = false;
+                _shiftSelecting = false;
 
                 // Position of the panel to the screen
                 Point ptPbFull = PointToScreen(pbFull.Location);
 
                 // Zoom to my selection
-                drawing.ZoomToSelection(rect, ptPbFull);
+                _drawing.ZoomToSelection(rect, ptPbFull);
 
                 // Refresh my screen & update my preview panel
                 pbFull.Refresh();
@@ -741,13 +741,13 @@ namespace Savan
             else
             {
                 // Stop dragging and update my panels
-                drawing.EndDrag();
+                _drawing.EndDrag();
                 UpdatePanels(true);
 
                 // Fancy cursor
-                if (dragCursor != null)
+                if (_dragCursor != null)
                 {
-                    pbFull.Cursor = dragCursor;
+                    pbFull.Cursor = _dragCursor;
                 }
             }
         }
@@ -755,11 +755,11 @@ namespace Savan
         private void pbFull_MouseMove(object sender, MouseEventArgs e)
         {
             // Am I dragging or selecting?
-            if (shiftSelecting == true)
+            if (_shiftSelecting == true)
             {
                 // Keep selecting
-                ptSelectionEnd.X = e.X;
-                ptSelectionEnd.Y = e.Y;
+                _ptSelectionEnd.X = e.X;
+                _ptSelectionEnd.Y = e.Y;
                 
                 Rectangle pbFullRect = new Rectangle(0, 0, pbFull.Width - 1, pbFull.Height - 1);
 
@@ -767,15 +767,15 @@ namespace Savan
                 if (pbFullRect.Contains(new Point(e.X, e.Y)))
                 {
                     // If so, draw my Rubber Band Rectangle!
-                    Rectangle rect = CalculateReversibleRectangle(ptSelectionStart, ptSelectionEnd);
+                    Rectangle rect = CalculateReversibleRectangle(_ptSelectionStart, _ptSelectionEnd);
                     DrawReversibleRectangle(rect);
                 }
             }
             else
             {
                 // Keep dragging
-                drawing.Drag(new Point(e.X, e.Y));
-                if (drawing.IsDragging)
+                _drawing.Drag(new Point(e.X, e.Y));
+                if (_drawing.IsDragging)
                 {
                     UpdatePanels(false);
                 }
@@ -784,7 +784,7 @@ namespace Savan
                     // I'm not dragging OR selecting
                     // Make sure if left or right shift is pressed to change cursor
 
-                    if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || selectMode == true) 
+                    if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || _selectMode == true) 
                     {
                         // Fancy Cursor
                         if (pbFull.Cursor != Cursors.Cross)
@@ -795,9 +795,9 @@ namespace Savan
                     else
                     {
                         // Fancy Cursor
-                        if (pbFull.Cursor != dragCursor)
+                        if (pbFull.Cursor != _dragCursor)
                         {
-                            pbFull.Cursor = dragCursor;
+                            pbFull.Cursor = _dragCursor;
                         }
                     }
                 }
@@ -806,17 +806,17 @@ namespace Savan
 
         private void ImageViewerEx_MouseWheel(object sender, MouseEventArgs e)
         {
-            drawing.Scroll(sender, e);
+            _drawing.Scroll(sender, e);
 
-            if (drawing.Image != null)
+            if (_drawing.Image != null)
             {
                 if (e.Delta < 0)
                 {
-                    OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.Out));
+                    OnZoom(new ImageViewerZoomEventArgs(_drawing.Zoom, ZoomType.Out));
                 }
                 else
                 {
-                    OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.In));
+                    OnZoom(new ImageViewerZoomEventArgs(_drawing.Zoom, ZoomType.In));
                 }
             }
 
@@ -846,12 +846,12 @@ namespace Savan
 
         private void btnRotate270_Click(object sender, EventArgs e)
         {
-            if (drawing != null)
+            if (_drawing != null)
             {
-                drawing.Rotate(RotateFlipType.Rotate270FlipNone);
+                _drawing.Rotate(RotateFlipType.Rotate270FlipNone);
 
                 // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
                 UpdatePanels(true);
                 ToggleMultiPage();
             }
@@ -859,12 +859,12 @@ namespace Savan
 
         private void btnRotate90_Click(object sender, EventArgs e)
         {
-            if (drawing != null)
+            if (_drawing != null)
             {
-                drawing.Rotate(RotateFlipType.Rotate90FlipNone);
+                _drawing.Rotate(RotateFlipType.Rotate90FlipNone);
 
                 // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(drawing.Rotation));
+                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
                 UpdatePanels(true);
                 ToggleMultiPage();
             }
@@ -872,52 +872,52 @@ namespace Savan
 
         private void btnZoomOut_Click(object sender, EventArgs e)
         {
-            drawing.ZoomOut();
+            _drawing.ZoomOut();
 
             // AfterZoom Event
-            if (drawing.Image != null)
+            if (_drawing.Image != null)
             {
-                OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.Out));
+                OnZoom(new ImageViewerZoomEventArgs(_drawing.Zoom, ZoomType.Out));
             }
             UpdatePanels(true);
         }
 
         private void btnZoomIn_Click(object sender, EventArgs e)
         {
-            drawing.ZoomIn();
+            _drawing.ZoomIn();
 
             // AfterZoom Event
-            if (drawing.Image != null)
+            if (_drawing.Image != null)
             {
-                OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.In));
+                OnZoom(new ImageViewerZoomEventArgs(_drawing.Zoom, ZoomType.In));
             }
             UpdatePanels(true);
         }
 
         private void btnFitToScreen_Click(object sender, EventArgs e)
         {
-            drawing.FitToScreen();
+            _drawing.FitToScreen();
             UpdatePanels(true);
         }
 
         private void cbZoom_SelectedIndexChanged(object sender, EventArgs e)
         {
             double zoom = (cbZoom.SelectedIndex + 1) * 0.25;
-            double originalZoom = drawing.Zoom;
+            double originalZoom = _drawing.Zoom;
 
-            if (drawing.Zoom != zoom)
+            if (_drawing.Zoom != zoom)
             {
-                drawing.SetZoom(zoom);
+                _drawing.SetZoom(zoom);
 
-                if (drawing.Image != null)
+                if (_drawing.Image != null)
                 {
                     if (zoom > originalZoom)
                     {
-                        OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.In));
+                        OnZoom(new ImageViewerZoomEventArgs(_drawing.Zoom, ZoomType.In));
                     }
                     else
                     {
-                        OnZoom(new ImageViewerZoomEventArgs(drawing.Zoom, ZoomType.Out));
+                        OnZoom(new ImageViewerZoomEventArgs(_drawing.Zoom, ZoomType.Out));
                     }
                 }
 
@@ -927,7 +927,7 @@ namespace Savan
 
         private void UpdatePanels(bool updatePreview)
         {
-            if (drawing.CurrentSize.Width > 0 && drawing.OriginalSize.Width > 0)
+            if (_drawing.CurrentSize.Width > 0 && _drawing.OriginalSize.Width > 0)
             {
                 // scrollbars
                 DisplayScrollbars();
@@ -937,62 +937,62 @@ namespace Savan
                 pbFull.Refresh();
 
                 // Calculate zoom
-                double zoom = Math.Round(((double)drawing.CurrentSize.Width / (double)drawing.OriginalSize.Width), 2);
+                double zoom = Math.Round(((double)_drawing.CurrentSize.Width / (double)_drawing.OriginalSize.Width), 2);
 
                 // Display zoom in percentages
                 cbZoom.Text = (int)(zoom * 100) + "%";
 
-                if (updatePreview && drawing.PreviewImage != null && pbPanel.Visible == true)
+                if (updatePreview && _drawing.PreviewImage != null && pbPanel.Visible == true)
                 {
                     // No memory leaks here
-                    if (preview != null)
+                    if (_preview != null)
                     {
-                        preview.Dispose();
-                        preview = null;
+                        _preview.Dispose();
+                        _preview = null;
                     }
 
                     // New preview
-                    preview = new Bitmap(drawing.PreviewImage.Size.Width, drawing.PreviewImage.Size.Height);
+                    _preview = new Bitmap(_drawing.PreviewImage.Size.Width, _drawing.PreviewImage.Size.Height);
 
                     // Make sure panel is the same size as the bitmap
-                    if (pbPanel.Size != drawing.PreviewImage.Size)
+                    if (pbPanel.Size != _drawing.PreviewImage.Size)
                     {
-                        pbPanel.Size = drawing.PreviewImage.Size;
+                        pbPanel.Size = _drawing.PreviewImage.Size;
                     }
 
                     // New Graphics from the new bitmap we created (Empty)
-                    using (Graphics g = Graphics.FromImage(preview))
+                    using (Graphics g = Graphics.FromImage(_preview))
                     {
                         // Draw the image on the bitmap
-                        g.DrawImage(drawing.PreviewImage, 0, 0, drawing.PreviewImage.Size.Width, drawing.PreviewImage.Size.Height);
+                        g.DrawImage(_drawing.PreviewImage, 0, 0, _drawing.PreviewImage.Size.Width, _drawing.PreviewImage.Size.Height);
 
-                        double ratioX = (double)drawing.PreviewImage.Size.Width / (double)drawing.CurrentSize.Width;
-                        double ratioY = (double)drawing.PreviewImage.Size.Height / (double)drawing.CurrentSize.Height;
+                        double ratioX = (double)_drawing.PreviewImage.Size.Width / (double)_drawing.CurrentSize.Width;
+                        double ratioY = (double)_drawing.PreviewImage.Size.Height / (double)_drawing.CurrentSize.Height;
 
                         double boxWidth = pbFull.Width * ratioX;
                         double boxHeight = pbFull.Height * ratioY;
-                        double positionX = ((drawing.BoundingBox.X - (drawing.BoundingBox.X * 2)) * ratioX);
-                        double positionY = ((drawing.BoundingBox.Y - (drawing.BoundingBox.Y * 2)) * ratioY);
+                        double positionX = ((_drawing.BoundingBox.X - (_drawing.BoundingBox.X * 2)) * ratioX);
+                        double positionY = ((_drawing.BoundingBox.Y - (_drawing.BoundingBox.Y * 2)) * ratioY);
 
                         // Making the red pen
                         Pen pen = new Pen(Color.Red, 1);
 
-                        if (boxHeight >= drawing.PreviewImage.Size.Height)
+                        if (boxHeight >= _drawing.PreviewImage.Size.Height)
                         {
-                            boxHeight = drawing.PreviewImage.Size.Height - 1;
+                            boxHeight = _drawing.PreviewImage.Size.Height - 1;
                         }
-                        else if ((boxHeight + positionY) > drawing.PreviewImage.Size.Height)
+                        else if ((boxHeight + positionY) > _drawing.PreviewImage.Size.Height)
                         {
-                            boxHeight = drawing.PreviewImage.Size.Height - (positionY);
+                            boxHeight = _drawing.PreviewImage.Size.Height - (positionY);
                         }
 
-                        if (boxWidth >= drawing.PreviewImage.Size.Width)
+                        if (boxWidth >= _drawing.PreviewImage.Size.Width)
                         {
-                            boxWidth = drawing.PreviewImage.Size.Width - 1;
+                            boxWidth = _drawing.PreviewImage.Size.Width - 1;
                         }
-                        else if ((boxWidth + positionX) > drawing.PreviewImage.Size.Width)
+                        else if ((boxWidth + positionX) > _drawing.PreviewImage.Size.Width)
                         {
-                            boxWidth = drawing.PreviewImage.Size.Width - (positionX);
+                            boxWidth = _drawing.PreviewImage.Size.Width - (positionX);
                         }
 
                         // Draw the rectangle on the bitmap
@@ -1000,25 +1000,25 @@ namespace Savan
                     }
 
                     // Display the bitmap
-                    pbPanel.Image = preview;
+                    pbPanel.Image = _preview;
                 }
             }
         }
 
         private void pbPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            if (panelDragging == false)
+            if (_panelDragging == false)
             {
-                drawing.JumpToOrigin(e.X, e.Y, pbPanel.Width, pbPanel.Height, pbFull.Width, pbFull.Height);
+                _drawing.JumpToOrigin(e.X, e.Y, pbPanel.Width, pbPanel.Height, pbFull.Width, pbFull.Height);
                 UpdatePanels(true);
 
-                panelDragging = true;
+                _panelDragging = true;
             }
         }
 
         private void pbFull_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            drawing.JumpToOrigin(e.X + (drawing.BoundingBox.X - (drawing.BoundingBox.X * 2)), e.Y + (drawing.BoundingBox.Y - (drawing.BoundingBox.Y * 2)), pbFull.Width, pbFull.Height);
+            _drawing.JumpToOrigin(e.X + (_drawing.BoundingBox.X - (_drawing.BoundingBox.X * 2)), e.Y + (_drawing.BoundingBox.Y - (_drawing.BoundingBox.Y * 2)), pbFull.Width, pbFull.Height);
             UpdatePanels(true);
         }
 
@@ -1033,9 +1033,9 @@ namespace Savan
             else
             {
                 // Fancy cursor if not dragging
-                if (!drawing.IsDragging)
+                if (!_drawing.IsDragging)
                 {
-                    pbFull.Cursor = dragCursor;
+                    pbFull.Cursor = _dragCursor;
                 }
             }
         }
@@ -1052,29 +1052,29 @@ namespace Savan
 
         private void pbPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (panelDragging)
+            if (_panelDragging)
             {
-                drawing.JumpToOrigin(e.X, e.Y, pbPanel.Width, pbPanel.Height, pbFull.Width, pbFull.Height);
+                _drawing.JumpToOrigin(e.X, e.Y, pbPanel.Width, pbPanel.Height, pbFull.Width, pbFull.Height);
                 UpdatePanels(true);
             }
         }
 
         private void pbPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            panelDragging = false;
+            _panelDragging = false;
         }
 
         private void pbFull_MouseEnter(object sender, EventArgs e)
         {
-            if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || selectMode == true)
+            if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || _selectMode == true)
             {
                 pbFull.Cursor = Cursors.Cross;
             }
             else
             {
-                if (dragCursor != null)
+                if (_dragCursor != null)
                 {
-                    pbFull.Cursor = dragCursor;
+                    pbFull.Cursor = _dragCursor;
                 }
             }
         }
@@ -1117,7 +1117,7 @@ namespace Savan
                             // Make it a double!
                             double zoomDouble = (double)zoom / (double)100;
 
-                            drawing.SetZoom(zoomDouble);
+                            _drawing.SetZoom(zoomDouble);
                             UpdatePanels(true);
 
                             btnZoomIn.Focus();
@@ -1236,22 +1236,22 @@ namespace Savan
 
         private void btnMode_Click(object sender, EventArgs e)
         {
-            if (selectMode == false)
+            if (_selectMode == false)
             {
-                selectMode = true;
+                _selectMode = true;
                 this.btnMode.Image = Savan.Properties.Resources.btnDrag;
             }
             else
             {
-                selectMode = false;
+                _selectMode = false;
                 this.btnMode.Image = Savan.Properties.Resources.btnSelect;
             }
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            drawing.NextPage();
-            tbNavigation.Text = (drawing.CurrentPage + 1).ToString();
+            _drawing.NextPage();
+            tbNavigation.Text = (_drawing.CurrentPage + 1).ToString();
 
             pbFull.Refresh();
             UpdatePanels(true);
@@ -1259,8 +1259,8 @@ namespace Savan
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            drawing.PreviousPage();
-            tbNavigation.Text = (drawing.CurrentPage + 1).ToString();
+            _drawing.PreviousPage();
+            tbNavigation.Text = (_drawing.CurrentPage + 1).ToString();
 
             pbFull.Refresh();
             UpdatePanels(true);
@@ -1281,16 +1281,16 @@ namespace Savan
                         int.TryParse(tbNavigation.Text, out page);
                         
                         // If zoom is higher than zero
-                        if (page > 0 && page <= drawing.Pages)
+                        if (page > 0 && page <= _drawing.Pages)
                         {
-                            drawing.SetPage(page);
+                            _drawing.SetPage(page);
                             UpdatePanels(true);
 
                             btnZoomIn.Focus();
                         }
                         else
                         {
-                            tbNavigation.Text = drawing.CurrentPage.ToString();
+                            tbNavigation.Text = _drawing.CurrentPage.ToString();
                         }
                     }
 
@@ -1305,15 +1305,15 @@ namespace Savan
 
         private void sbVert_Scroll(object sender, ScrollEventArgs e)
         {
-            if (!isScrolling)
+            if (!_isScrolling)
             {
                 double perPercent = (double)this.CurrentSize.Height / 101.0;
 
                 double value = e.NewValue * perPercent;
 
-                this.drawing.SetPositionY(Convert.ToInt32(Math.Round(value, 0)));
+                this._drawing.SetPositionY(Convert.ToInt32(Math.Round(value, 0)));
 
-                this.drawing.AvoidOutOfScreen();
+                this._drawing.AvoidOutOfScreen();
 
                 pbFull.Invalidate();
 
@@ -1323,15 +1323,15 @@ namespace Savan
 
         private void sbHoriz_Scroll(object sender, ScrollEventArgs e)
         {
-            if (!isScrolling)
+            if (!_isScrolling)
             {
                 double perPercent = (double)this.CurrentSize.Width / 101.0;
 
                 double value = e.NewValue * perPercent;
 
-                this.drawing.SetPositionX(Convert.ToInt32(Math.Round(value, 0)));
+                this._drawing.SetPositionX(Convert.ToInt32(Math.Round(value, 0)));
 
-                this.drawing.AvoidOutOfScreen();
+                this._drawing.AvoidOutOfScreen();
 
                 pbFull.Invalidate();
 

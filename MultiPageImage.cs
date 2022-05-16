@@ -10,11 +10,11 @@ namespace Savan
     {
         #region Fields
 
-        private int currentPage;
+        private int _currentPage;
 
-        private Bitmap image;
+        private Bitmap _image;
 
-        private Bitmap bmp;
+        private Bitmap _bmp;
 
         #endregion Fields
 
@@ -23,7 +23,7 @@ namespace Savan
         public MultiPageImage(Bitmap image)
         {
             Image = image;
-            currentPage = 0;
+            _currentPage = 0;
         }
 
         #endregion C'tors
@@ -34,28 +34,28 @@ namespace Savan
 
         public Bitmap Image
         {
-            get => bmp;
+            get => _bmp;
             set
             {
-                if (image != null)
+                if (_image != null)
                 {
-                    image.Dispose();
-                    image = null;
+                    _image.Dispose();
+                    _image = null;
                 }
 
-                image = value;
+                _image = value;
 
-                if (bmp != null)
+                if (_bmp != null)
                 {
-                    bmp.Dispose();
-                    bmp = null;
+                    _bmp.Dispose();
+                    _bmp = null;
                 }
 
-                bmp = new Bitmap(image);
+                _bmp = new Bitmap(_image);
             }
         }
 
-        public Bitmap Page => bmp ?? (bmp = new Bitmap(image));
+        public Bitmap Page => _bmp ?? (_bmp = new Bitmap(_image));
 
         public void Rotate(int rotation)
         {
@@ -66,75 +66,75 @@ namespace Savan
             switch (this.Rotation)
             {
                 case 90:
-                    bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    _bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
                     break;
                 case 180:
-                    bmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    _bmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
                     break;
                 case 270:
-                    bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    _bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
                     break;
             }
         }
 
         public void SetPage(int pageNumber)
         {
-            if (image == null) return;
-            if (currentPage == pageNumber) return;
+            if (_image == null) return;
+            if (_currentPage == pageNumber) return;
 
-            int pages = image.GetFrameCount(FrameDimension.Page);
+            int pages = _image.GetFrameCount(FrameDimension.Page);
             if (pages > pageNumber && pageNumber >= 0)
             {
-                currentPage = pageNumber;
+                _currentPage = pageNumber;
 
-                image.SelectActiveFrame(FrameDimension.Page, pageNumber);
+                _image.SelectActiveFrame(FrameDimension.Page, pageNumber);
 
-                if (bmp != null)
+                if (_bmp != null)
                 {
-                    bmp.Dispose();
-                    bmp = null;
+                    _bmp.Dispose();
+                    _bmp = null;
                 }
 
-                bmp = new Bitmap(image);
+                _bmp = new Bitmap(_image);
             }
         }
 
         public Bitmap GetBitmap(int pageNumber)
         {
-            if (image == null)
+            if (_image == null)
             {
                 return null;
             }
 
-            if (currentPage != pageNumber)
+            if (_currentPage != pageNumber)
             {
-                int pages = image.GetFrameCount(FrameDimension.Page);
+                int pages = _image.GetFrameCount(FrameDimension.Page);
                 if (pages > pageNumber && pageNumber >= 0)
                 {
-                    currentPage = pageNumber;
+                    _currentPage = pageNumber;
 
-                    image.SelectActiveFrame(FrameDimension.Page, pageNumber);
+                    _image.SelectActiveFrame(FrameDimension.Page, pageNumber);
 
-                    if (bmp != null)
+                    if (_bmp != null)
                     {
-                        bmp.Dispose();
-                        bmp = null;
+                        _bmp.Dispose();
+                        _bmp = null;
                     }
 
-                    bmp = new Bitmap(image);
+                    _bmp = new Bitmap(_image);
                 }
             }
 
-            return bmp;
+            return _bmp;
         }
 
         public void Dispose()
         {
-            image?.Dispose();
-            image = null;
+            _image?.Dispose();
+            _image = null;
 
-            bmp?.Dispose();
-            bmp = null;
+            _bmp?.Dispose();
+            _bmp = null;
         }
 
         #endregion Public Members
