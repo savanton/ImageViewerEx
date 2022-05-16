@@ -349,43 +349,17 @@ namespace Savan
             }
         }
 
-        public void Rotate90()
+        public void Rotate(RotateFlipType rotateType)
         {
-            if (_drawing != null)
-            {
-                _drawing.Rotate(RotateFlipType.Rotate90FlipNone);
+            if (_drawing == null)
+                return;
 
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
-        }
+            _drawing.Rotate(rotateType);
 
-        public void Rotate180()
-        {
-            if (_drawing != null)
-            {
-                _drawing.Rotate(RotateFlipType.Rotate180FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
-        }
-
-        public void Rotate270()
-        {
-            if (_drawing != null)
-            {
-                _drawing.Rotate(RotateFlipType.Rotate270FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
+            // AfterRotation Event
+            OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
+            UpdatePanels(true);
+            ToggleMultiPage();
         }
 
         public void FitToScreen()
@@ -846,28 +820,12 @@ namespace Savan
 
         private void btnRotate270_Click(object sender, EventArgs e)
         {
-            if (_drawing != null)
-            {
-                _drawing.Rotate(RotateFlipType.Rotate270FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
+            Rotate(RotateFlipType.Rotate270FlipNone);
         }
 
         private void btnRotate90_Click(object sender, EventArgs e)
         {
-            if (_drawing != null)
-            {
-                _drawing.Rotate(RotateFlipType.Rotate90FlipNone);
-
-                // AfterRotation Event
-                OnRotation(new ImageViewerRotationEventArgs(_drawing.Rotation));
-                UpdatePanels(true);
-                ToggleMultiPage();
-            }
+            Rotate(RotateFlipType.Rotate90FlipNone);
         }
 
         private void btnZoomOut_Click(object sender, EventArgs e)
