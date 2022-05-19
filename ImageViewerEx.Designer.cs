@@ -32,230 +32,68 @@
         {
             this.panelPreview = new System.Windows.Forms.Panel();
             this.lblPreview = new System.Windows.Forms.Label();
-            this.panelMenu = new System.Windows.Forms.Panel();
-            this.btnMode = new System.Windows.Forms.Button();
-            this.btnPreview = new System.Windows.Forms.Button();
-            this.cbZoom = new System.Windows.Forms.ComboBox();
-            this.btnFitToScreen = new System.Windows.Forms.Button();
-            this.btnZoomIn = new System.Windows.Forms.Button();
-            this.btnZoomOut = new System.Windows.Forms.Button();
-            this.btnRotate270 = new System.Windows.Forms.Button();
-            this.btnRotate90 = new System.Windows.Forms.Button();
-            this.btnOpen = new System.Windows.Forms.Button();
-            this.panelNavigation = new System.Windows.Forms.Panel();
-            this.lblNavigation = new System.Windows.Forms.Label();
-            this.tbNavigation = new System.Windows.Forms.TextBox();
-            this.btnBack = new System.Windows.Forms.Button();
-            this.btnNext = new System.Windows.Forms.Button();
             this.pbPanel = new System.Windows.Forms.PictureBox();
+            this.tsLeft = new System.Windows.Forms.ToolStrip();
+            this.tsbZoomIn = new System.Windows.Forms.ToolStripButton();
+            this.tsbZoomOut = new System.Windows.Forms.ToolStripButton();
+            this.tsbFitToScreen = new System.Windows.Forms.ToolStripButton();
+            this.tsbRotate270 = new System.Windows.Forms.ToolStripButton();
+            this.tsbRotate90 = new System.Windows.Forms.ToolStripButton();
+            this.tsbMode = new System.Windows.Forms.ToolStripButton();
+            this.tsbOpen = new System.Windows.Forms.ToolStripButton();
+            this.tsbPreview = new System.Windows.Forms.ToolStripButton();
+            this.tsTop = new System.Windows.Forms.ToolStrip();
+            this.tscbZoom = new System.Windows.Forms.ToolStripComboBox();
+            this.tsbNext = new System.Windows.Forms.ToolStripButton();
+            this.tsbBack = new System.Windows.Forms.ToolStripButton();
+            this.tslblNavigation = new System.Windows.Forms.ToolStripLabel();
+            this.tstbNavigation = new System.Windows.Forms.ToolStripTextBox();
+            this.layoutMain = new System.Windows.Forms.TableLayoutPanel();
             this.pbFull = new Savan.PanelDoubleBuffered();
             this.sbVert = new System.Windows.Forms.VScrollBar();
             this.sbHoriz = new System.Windows.Forms.HScrollBar();
             this.sbPanel = new System.Windows.Forms.Panel();
             this.panelPreview.SuspendLayout();
-            this.panelMenu.SuspendLayout();
-            this.panelNavigation.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbPanel)).BeginInit();
+            this.tsLeft.SuspendLayout();
+            this.tsTop.SuspendLayout();
+            this.layoutMain.SuspendLayout();
             this.pbFull.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelPreview
             // 
-            this.panelPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelPreview.BackColor = System.Drawing.Color.LightSteelBlue;
             this.panelPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelPreview.Controls.Add(this.lblPreview);
-            this.panelPreview.Location = new System.Drawing.Point(301, 3);
+            this.panelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelPreview.Location = new System.Drawing.Point(406, 0);
+            this.panelPreview.Margin = new System.Windows.Forms.Padding(4, 0, 0, 2);
             this.panelPreview.Name = "panelPreview";
-            this.panelPreview.Size = new System.Drawing.Size(150, 29);
+            this.panelPreview.Size = new System.Drawing.Size(199, 35);
             this.panelPreview.TabIndex = 12;
             // 
             // lblPreview
             // 
-            this.lblPreview.AutoSize = true;
-            this.lblPreview.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPreview.Font = new System.Drawing.Font("Verdana", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPreview.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.lblPreview.Location = new System.Drawing.Point(3, 4);
+            this.lblPreview.Location = new System.Drawing.Point(0, 0);
+            this.lblPreview.Margin = new System.Windows.Forms.Padding(0);
             this.lblPreview.Name = "lblPreview";
-            this.lblPreview.Size = new System.Drawing.Size(59, 18);
+            this.lblPreview.Size = new System.Drawing.Size(197, 33);
             this.lblPreview.TabIndex = 0;
             this.lblPreview.Text = "Preview";
-            // 
-            // panelMenu
-            // 
-            this.panelMenu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelMenu.BackColor = System.Drawing.Color.LightSteelBlue;
-            this.panelMenu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelMenu.Controls.Add(this.btnMode);
-            this.panelMenu.Controls.Add(this.btnPreview);
-            this.panelMenu.Controls.Add(this.cbZoom);
-            this.panelMenu.Controls.Add(this.btnFitToScreen);
-            this.panelMenu.Controls.Add(this.btnZoomIn);
-            this.panelMenu.Controls.Add(this.btnZoomOut);
-            this.panelMenu.Controls.Add(this.btnRotate270);
-            this.panelMenu.Controls.Add(this.btnRotate90);
-            this.panelMenu.Controls.Add(this.btnOpen);
-            this.panelMenu.Location = new System.Drawing.Point(2, 3);
-            this.panelMenu.Name = "panelMenu";
-            this.panelMenu.Size = new System.Drawing.Size(295, 29);
-            this.panelMenu.TabIndex = 11;
-            // 
-            // btnMode
-            // 
-            this.btnMode.Image = global::Savan.Properties.Resources.btnSelect;
-            this.btnMode.Location = new System.Drawing.Point(142, 1);
-            this.btnMode.Name = "btnMode";
-            this.btnMode.Size = new System.Drawing.Size(25, 25);
-            this.btnMode.TabIndex = 16;
-            this.btnMode.UseVisualStyleBackColor = true;
-            this.btnMode.Click += new System.EventHandler(this.btnMode_Click);
-            // 
-            // btnPreview
-            // 
-            this.btnPreview.Image = global::Savan.Properties.Resources.btnPreview;
-            this.btnPreview.Location = new System.Drawing.Point(198, 1);
-            this.btnPreview.Name = "btnPreview";
-            this.btnPreview.Size = new System.Drawing.Size(25, 25);
-            this.btnPreview.TabIndex = 15;
-            this.btnPreview.UseVisualStyleBackColor = true;
-            this.btnPreview.Visible = false;
-            this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
-            // 
-            // cbZoom
-            // 
-            this.cbZoom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbZoom.FormattingEnabled = true;
-            this.cbZoom.Location = new System.Drawing.Point(228, 3);
-            this.cbZoom.Name = "cbZoom";
-            this.cbZoom.Size = new System.Drawing.Size(62, 21);
-            this.cbZoom.TabIndex = 14;
-            this.cbZoom.SelectedIndexChanged += new System.EventHandler(this.cbZoom_SelectedIndexChanged);
-            this.cbZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cbZoom_KeyPress);
-            // 
-            // btnFitToScreen
-            // 
-            this.btnFitToScreen.Image = global::Savan.Properties.Resources.btnFitToScreen;
-            this.btnFitToScreen.Location = new System.Drawing.Point(58, 1);
-            this.btnFitToScreen.Name = "btnFitToScreen";
-            this.btnFitToScreen.Size = new System.Drawing.Size(25, 25);
-            this.btnFitToScreen.TabIndex = 13;
-            this.btnFitToScreen.UseVisualStyleBackColor = true;
-            this.btnFitToScreen.Click += new System.EventHandler(this.btnFitToScreen_Click);
-            // 
-            // btnZoomIn
-            // 
-            this.btnZoomIn.Image = global::Savan.Properties.Resources.btnZoomIn;
-            this.btnZoomIn.Location = new System.Drawing.Point(2, 1);
-            this.btnZoomIn.Name = "btnZoomIn";
-            this.btnZoomIn.Size = new System.Drawing.Size(25, 25);
-            this.btnZoomIn.TabIndex = 12;
-            this.btnZoomIn.UseVisualStyleBackColor = true;
-            this.btnZoomIn.Click += new System.EventHandler(this.btnZoomIn_Click);
-            // 
-            // btnZoomOut
-            // 
-            this.btnZoomOut.Image = global::Savan.Properties.Resources.btnZoomOut;
-            this.btnZoomOut.Location = new System.Drawing.Point(30, 1);
-            this.btnZoomOut.Name = "btnZoomOut";
-            this.btnZoomOut.Size = new System.Drawing.Size(25, 25);
-            this.btnZoomOut.TabIndex = 11;
-            this.btnZoomOut.UseVisualStyleBackColor = true;
-            this.btnZoomOut.Click += new System.EventHandler(this.btnZoomOut_Click);
-            // 
-            // btnRotate270
-            // 
-            this.btnRotate270.Image = global::Savan.Properties.Resources.btnRotate270;
-            this.btnRotate270.Location = new System.Drawing.Point(86, 1);
-            this.btnRotate270.Name = "btnRotate270";
-            this.btnRotate270.Size = new System.Drawing.Size(25, 25);
-            this.btnRotate270.TabIndex = 10;
-            this.btnRotate270.UseVisualStyleBackColor = true;
-            this.btnRotate270.Click += new System.EventHandler(this.btnRotate270_Click);
-            // 
-            // btnRotate90
-            // 
-            this.btnRotate90.Image = global::Savan.Properties.Resources.btnRotate90;
-            this.btnRotate90.Location = new System.Drawing.Point(114, 1);
-            this.btnRotate90.Name = "btnRotate90";
-            this.btnRotate90.Size = new System.Drawing.Size(25, 25);
-            this.btnRotate90.TabIndex = 9;
-            this.btnRotate90.UseVisualStyleBackColor = true;
-            this.btnRotate90.Click += new System.EventHandler(this.btnRotate90_Click);
-            // 
-            // btnOpen
-            // 
-            this.btnOpen.Image = global::Savan.Properties.Resources.btnOpen;
-            this.btnOpen.Location = new System.Drawing.Point(170, 1);
-            this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(25, 25);
-            this.btnOpen.TabIndex = 8;
-            this.btnOpen.UseVisualStyleBackColor = true;
-            this.btnOpen.Visible = false;
-            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
-            // 
-            // panelNavigation
-            // 
-            this.panelNavigation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelNavigation.BackColor = System.Drawing.Color.LightSteelBlue;
-            this.panelNavigation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelNavigation.Controls.Add(this.lblNavigation);
-            this.panelNavigation.Controls.Add(this.tbNavigation);
-            this.panelNavigation.Controls.Add(this.btnBack);
-            this.panelNavigation.Controls.Add(this.btnNext);
-            this.panelNavigation.Location = new System.Drawing.Point(301, 157);
-            this.panelNavigation.Name = "panelNavigation";
-            this.panelNavigation.Size = new System.Drawing.Size(150, 29);
-            this.panelNavigation.TabIndex = 13;
-            this.panelNavigation.Visible = false;
-            // 
-            // lblNavigation
-            // 
-            this.lblNavigation.AutoSize = true;
-            this.lblNavigation.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblNavigation.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.lblNavigation.Location = new System.Drawing.Point(41, 5);
-            this.lblNavigation.Name = "lblNavigation";
-            this.lblNavigation.Size = new System.Drawing.Size(24, 18);
-            this.lblNavigation.TabIndex = 1;
-            this.lblNavigation.Text = "/ 0";
-            // 
-            // tbNavigation
-            // 
-            this.tbNavigation.Location = new System.Drawing.Point(4, 4);
-            this.tbNavigation.Name = "tbNavigation";
-            this.tbNavigation.Size = new System.Drawing.Size(33, 20);
-            this.tbNavigation.TabIndex = 19;
-            this.tbNavigation.Text = "0";
-            this.tbNavigation.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbNavigation.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbNavigation_KeyPress);
-            // 
-            // btnBack
-            // 
-            this.btnBack.Image = global::Savan.Properties.Resources.btnBack;
-            this.btnBack.Location = new System.Drawing.Point(93, 1);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(25, 25);
-            this.btnBack.TabIndex = 18;
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
-            // 
-            // btnNext
-            // 
-            this.btnNext.Image = global::Savan.Properties.Resources.btnNext;
-            this.btnNext.Location = new System.Drawing.Point(121, 1);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(25, 25);
-            this.btnNext.TabIndex = 17;
-            this.btnNext.UseVisualStyleBackColor = true;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            this.lblPreview.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pbPanel
             // 
-            this.pbPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbPanel.Location = new System.Drawing.Point(302, 36);
+            this.pbPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pbPanel.Location = new System.Drawing.Point(406, 37);
+            this.pbPanel.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
             this.pbPanel.Name = "pbPanel";
-            this.pbPanel.Size = new System.Drawing.Size(148, 117);
+            this.pbPanel.Size = new System.Drawing.Size(199, 144);
             this.pbPanel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbPanel.TabIndex = 10;
             this.pbPanel.TabStop = false;
@@ -263,20 +101,237 @@
             this.pbPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbPanel_MouseMove);
             this.pbPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbPanel_MouseUp);
             // 
+            // tsLeft
+            // 
+            this.tsLeft.BackColor = System.Drawing.SystemColors.Control;
+            this.tsLeft.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tsLeft.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.tsLeft.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.tsLeft.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbZoomIn,
+            this.tsbZoomOut,
+            this.tsbFitToScreen,
+            this.tsbRotate270,
+            this.tsbRotate90,
+            this.tsbMode,
+            this.tsbOpen,
+            this.tsbPreview});
+            this.tsLeft.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
+            this.tsLeft.Location = new System.Drawing.Point(0, 37);
+            this.tsLeft.Name = "tsLeft";
+            this.tsLeft.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            this.tsLeft.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.tsLeft.Size = new System.Drawing.Size(26, 383);
+            this.tsLeft.TabIndex = 15;
+            this.tsLeft.Text = "toolStrip1";
+            // 
+            // tsbZoomIn
+            // 
+            this.tsbZoomIn.AutoSize = false;
+            this.tsbZoomIn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbZoomIn.Image = global::Savan.Properties.Resources.btnZoomIn;
+            this.tsbZoomIn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbZoomIn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbZoomIn.Name = "tsbZoomIn";
+            this.tsbZoomIn.Size = new System.Drawing.Size(24, 24);
+            this.tsbZoomIn.Text = "tsbZoomIn";
+            this.tsbZoomIn.Click += new System.EventHandler(this.tsbZoomIn_Click);
+            // 
+            // tsbZoomOut
+            // 
+            this.tsbZoomOut.AutoSize = false;
+            this.tsbZoomOut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbZoomOut.Image = global::Savan.Properties.Resources.btnZoomOut;
+            this.tsbZoomOut.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbZoomOut.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbZoomOut.Name = "tsbZoomOut";
+            this.tsbZoomOut.Size = new System.Drawing.Size(24, 24);
+            this.tsbZoomOut.Text = "tsbZoomOut";
+            this.tsbZoomOut.Click += new System.EventHandler(this.tsbZoomOut_Click);
+            // 
+            // tsbFitToScreen
+            // 
+            this.tsbFitToScreen.AutoSize = false;
+            this.tsbFitToScreen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbFitToScreen.Image = global::Savan.Properties.Resources.btnFitToScreen;
+            this.tsbFitToScreen.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbFitToScreen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbFitToScreen.Name = "tsbFitToScreen";
+            this.tsbFitToScreen.Size = new System.Drawing.Size(24, 24);
+            this.tsbFitToScreen.Text = "tsbFitToScreen";
+            this.tsbFitToScreen.Click += new System.EventHandler(this.tsbFitToScreen_Click);
+            // 
+            // tsbRotate270
+            // 
+            this.tsbRotate270.AutoSize = false;
+            this.tsbRotate270.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbRotate270.Image = global::Savan.Properties.Resources.btnRotate270;
+            this.tsbRotate270.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbRotate270.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRotate270.Name = "tsbRotate270";
+            this.tsbRotate270.Size = new System.Drawing.Size(24, 24);
+            this.tsbRotate270.Text = "tsbRotate270";
+            this.tsbRotate270.Click += new System.EventHandler(this.tsbRotate270_Click);
+            // 
+            // tsbRotate90
+            // 
+            this.tsbRotate90.AutoSize = false;
+            this.tsbRotate90.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbRotate90.Image = global::Savan.Properties.Resources.btnRotate90;
+            this.tsbRotate90.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbRotate90.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbRotate90.Name = "tsbRotate90";
+            this.tsbRotate90.Size = new System.Drawing.Size(24, 24);
+            this.tsbRotate90.Text = "tsbRotate90";
+            this.tsbRotate90.Click += new System.EventHandler(this.tsbRotate90_Click);
+            // 
+            // tsbMode
+            // 
+            this.tsbMode.AutoSize = false;
+            this.tsbMode.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbMode.Image = global::Savan.Properties.Resources.btnSelect;
+            this.tsbMode.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbMode.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbMode.Name = "tsbMode";
+            this.tsbMode.Size = new System.Drawing.Size(24, 24);
+            this.tsbMode.Text = "tsbMode";
+            this.tsbMode.Click += new System.EventHandler(this.tsbMode_Click);
+            // 
+            // tsbOpen
+            // 
+            this.tsbOpen.AutoSize = false;
+            this.tsbOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbOpen.Image = global::Savan.Properties.Resources.btnOpen;
+            this.tsbOpen.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbOpen.Name = "tsbOpen";
+            this.tsbOpen.Size = new System.Drawing.Size(24, 24);
+            this.tsbOpen.Text = "tsbOpen";
+            this.tsbOpen.Click += new System.EventHandler(this.tsbOpen_Click);
+            // 
+            // tsbPreview
+            // 
+            this.tsbPreview.AutoSize = false;
+            this.tsbPreview.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbPreview.Image = global::Savan.Properties.Resources.btnPreview;
+            this.tsbPreview.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbPreview.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbPreview.Name = "tsbPreview";
+            this.tsbPreview.Size = new System.Drawing.Size(24, 24);
+            this.tsbPreview.Text = "tsbPreview";
+            this.tsbPreview.Click += new System.EventHandler(this.tsbPreview_Click);
+            // 
+            // tsTop
+            // 
+            this.tsTop.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.tsTop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tsTop.GripMargin = new System.Windows.Forms.Padding(0);
+            this.tsTop.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.tsTop.ImageScalingSize = new System.Drawing.Size(22, 22);
+            this.tsTop.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tscbZoom,
+            this.tsbNext,
+            this.tsbBack,
+            this.tslblNavigation,
+            this.tstbNavigation});
+            this.tsTop.Location = new System.Drawing.Point(26, 0);
+            this.tsTop.Name = "tsTop";
+            this.tsTop.Padding = new System.Windows.Forms.Padding(0);
+            this.tsTop.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.tsTop.Size = new System.Drawing.Size(376, 37);
+            this.tsTop.TabIndex = 24;
+            this.tsTop.Text = "toolStrip2";
+            // 
+            // tscbZoom
+            // 
+            this.tscbZoom.AutoSize = false;
+            this.tscbZoom.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+            this.tscbZoom.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tscbZoom.Margin = new System.Windows.Forms.Padding(3, 0, 0, 9);
+            this.tscbZoom.Name = "tscbZoom";
+            this.tscbZoom.Size = new System.Drawing.Size(100, 28);
+            this.tscbZoom.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
+            this.tscbZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tscbZoom_KeyPress);
+            // 
+            // tsbNext
+            // 
+            this.tsbNext.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tsbNext.AutoSize = false;
+            this.tsbNext.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbNext.Image = global::Savan.Properties.Resources.btnNext;
+            this.tsbNext.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNext.Name = "tsbNext";
+            this.tsbNext.Size = new System.Drawing.Size(24, 24);
+            this.tsbNext.Text = "tsbNext";
+            this.tsbNext.Click += new System.EventHandler(this.tsbNext_Click);
+            // 
+            // tsbBack
+            // 
+            this.tsbBack.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tsbBack.AutoSize = false;
+            this.tsbBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsbBack.Image = global::Savan.Properties.Resources.btnBack;
+            this.tsbBack.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.tsbBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbBack.Name = "tsbBack";
+            this.tsbBack.Size = new System.Drawing.Size(24, 24);
+            this.tsbBack.Text = "tsbBack";
+            this.tsbBack.Click += new System.EventHandler(this.tsbBack_Click);
+            // 
+            // tslblNavigation
+            // 
+            this.tslblNavigation.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tslblNavigation.Name = "tslblNavigation";
+            this.tslblNavigation.Size = new System.Drawing.Size(27, 34);
+            this.tslblNavigation.Text = "/ 0";
+            // 
+            // tstbNavigation
+            // 
+            this.tstbNavigation.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tstbNavigation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tstbNavigation.MaxLength = 5;
+            this.tstbNavigation.Name = "tstbNavigation";
+            this.tstbNavigation.Size = new System.Drawing.Size(39, 37);
+            this.tstbNavigation.Text = "0";
+            this.tstbNavigation.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tstbNavigation.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tstbNavigation_KeyPress);
+            // 
+            // layoutMain
+            // 
+            this.layoutMain.BackColor = System.Drawing.SystemColors.Control;
+            this.layoutMain.ColumnCount = 3;
+            this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.layoutMain.Controls.Add(this.pbFull, 1, 1);
+            this.layoutMain.Controls.Add(this.tsLeft, 0, 1);
+            this.layoutMain.Controls.Add(this.tsTop, 1, 0);
+            this.layoutMain.Controls.Add(this.pbPanel, 2, 1);
+            this.layoutMain.Controls.Add(this.panelPreview, 2, 0);
+            this.layoutMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutMain.Location = new System.Drawing.Point(0, 0);
+            this.layoutMain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.layoutMain.Name = "layoutMain";
+            this.layoutMain.RowCount = 2;
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutMain.Size = new System.Drawing.Size(605, 420);
+            this.layoutMain.TabIndex = 26;
+            // 
             // pbFull
             // 
-            this.pbFull.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.pbFull.BackColor = System.Drawing.SystemColors.ControlLight;
             this.pbFull.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pbFull.Controls.Add(this.sbVert);
             this.pbFull.Controls.Add(this.sbHoriz);
             this.pbFull.Controls.Add(this.sbPanel);
-            this.pbFull.Location = new System.Drawing.Point(2, 36);
+            this.pbFull.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbFull.Location = new System.Drawing.Point(26, 37);
+            this.pbFull.Margin = new System.Windows.Forms.Padding(0);
             this.pbFull.Name = "pbFull";
-            this.pbFull.Size = new System.Drawing.Size(295, 271);
-            this.pbFull.TabIndex = 13;
+            this.pbFull.Size = new System.Drawing.Size(376, 383);
+            this.pbFull.TabIndex = 23;
             this.pbFull.Click += new System.EventHandler(this.pbFull_Click);
             this.pbFull.DragDrop += new System.Windows.Forms.DragEventHandler(this.pbFull_DragDrop);
             this.pbFull.DragEnter += new System.Windows.Forms.DragEventHandler(this.pbFull_DragEnter);
@@ -291,21 +346,21 @@
             // 
             // sbVert
             // 
-            this.sbVert.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.sbVert.Location = new System.Drawing.Point(276, 0);
+            this.sbVert.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.sbVert.Location = new System.Drawing.Point(351, 0);
             this.sbVert.Name = "sbVert";
-            this.sbVert.Size = new System.Drawing.Size(17, 253);
+            this.sbVert.Size = new System.Drawing.Size(17, 358);
             this.sbVert.TabIndex = 0;
             this.sbVert.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbVert_Scroll);
             // 
             // sbHoriz
             // 
-            this.sbHoriz.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.sbHoriz.Location = new System.Drawing.Point(0, 252);
+            this.sbHoriz.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.sbHoriz.Location = new System.Drawing.Point(0, 357);
             this.sbHoriz.Name = "sbHoriz";
-            this.sbHoriz.Size = new System.Drawing.Size(276, 17);
+            this.sbHoriz.Size = new System.Drawing.Size(351, 17);
             this.sbHoriz.TabIndex = 1;
             this.sbHoriz.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbHoriz_Scroll);
             // 
@@ -313,34 +368,34 @@
             // 
             this.sbPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.sbPanel.BackColor = System.Drawing.SystemColors.Info;
-            this.sbPanel.Location = new System.Drawing.Point(277, 253);
+            this.sbPanel.Location = new System.Drawing.Point(353, 358);
+            this.sbPanel.Margin = new System.Windows.Forms.Padding(4);
             this.sbPanel.Name = "sbPanel";
-            this.sbPanel.Size = new System.Drawing.Size(16, 16);
+            this.sbPanel.Size = new System.Drawing.Size(21, 20);
             this.sbPanel.TabIndex = 2;
             // 
-            // KpImageViewer
+            // ImageViewerEx
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.panelNavigation);
-            this.Controls.Add(this.pbFull);
-            this.Controls.Add(this.panelPreview);
-            this.Controls.Add(this.panelMenu);
-            this.Controls.Add(this.pbPanel);
+            this.AutoSize = true;
+            this.Controls.Add(this.layoutMain);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.MinimumSize = new System.Drawing.Size(454, 157);
-            this.Name = "ImageViewer";
-            this.Size = new System.Drawing.Size(454, 310);
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.MinimumSize = new System.Drawing.Size(605, 193);
+            this.Name = "ImageViewerEx";
+            this.Size = new System.Drawing.Size(605, 420);
             this.Load += new System.EventHandler(this.ImageViewerEx_Load);
             this.Click += new System.EventHandler(this.ImageViewerEx_Click);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.ImageViewerEx_MouseWheel);
-            this.Resize += new System.EventHandler(this.ImageViewerEx_Resize);
             this.panelPreview.ResumeLayout(false);
-            this.panelPreview.PerformLayout();
-            this.panelMenu.ResumeLayout(false);
-            this.panelNavigation.ResumeLayout(false);
-            this.panelNavigation.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbPanel)).EndInit();
+            this.tsLeft.ResumeLayout(false);
+            this.tsLeft.PerformLayout();
+            this.tsTop.ResumeLayout(false);
+            this.tsTop.PerformLayout();
+            this.layoutMain.ResumeLayout(false);
+            this.layoutMain.PerformLayout();
             this.pbFull.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -350,25 +405,26 @@
 
         private System.Windows.Forms.Panel panelPreview;
         private System.Windows.Forms.Label lblPreview;
-        private System.Windows.Forms.Panel panelMenu;
         private System.Windows.Forms.PictureBox pbPanel;
         private PanelDoubleBuffered pbFull;
-        private System.Windows.Forms.Button btnOpen;
-        private System.Windows.Forms.Button btnRotate270;
-        private System.Windows.Forms.Button btnRotate90;
-        private System.Windows.Forms.Button btnZoomIn;
-        private System.Windows.Forms.Button btnZoomOut;
-        private System.Windows.Forms.Button btnFitToScreen;
-        private System.Windows.Forms.ComboBox cbZoom;
-        private System.Windows.Forms.Button btnPreview;
-        private System.Windows.Forms.Button btnMode;
-        private System.Windows.Forms.Panel panelNavigation;
-        private System.Windows.Forms.Button btnBack;
-        private System.Windows.Forms.Button btnNext;
-        private System.Windows.Forms.Label lblNavigation;
-        private System.Windows.Forms.TextBox tbNavigation;
         private System.Windows.Forms.Panel sbPanel;
         private System.Windows.Forms.HScrollBar sbHoriz;
         private System.Windows.Forms.VScrollBar sbVert;
+        private System.Windows.Forms.ToolStrip tsLeft;
+        private System.Windows.Forms.ToolStripButton tsbZoomIn;
+        private System.Windows.Forms.ToolStripButton tsbZoomOut;
+        private System.Windows.Forms.ToolStripButton tsbFitToScreen;
+        private System.Windows.Forms.ToolStripButton tsbRotate270;
+        private System.Windows.Forms.ToolStripButton tsbRotate90;
+        private System.Windows.Forms.ToolStripButton tsbMode;
+        private System.Windows.Forms.ToolStripButton tsbOpen;
+        private System.Windows.Forms.ToolStripButton tsbPreview;
+        private System.Windows.Forms.ToolStrip tsTop;
+        private System.Windows.Forms.ToolStripComboBox tscbZoom;
+        private System.Windows.Forms.TableLayoutPanel layoutMain;
+        private System.Windows.Forms.ToolStripButton tsbNext;
+        private System.Windows.Forms.ToolStripButton tsbBack;
+        private System.Windows.Forms.ToolStripLabel tslblNavigation;
+        private System.Windows.Forms.ToolStripTextBox tstbNavigation;
     }
 }
