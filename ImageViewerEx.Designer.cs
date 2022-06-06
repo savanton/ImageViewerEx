@@ -64,7 +64,6 @@
             // panelPreview
             // 
             this.panelPreview.BackColor = System.Drawing.Color.LightSteelBlue;
-            this.panelPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelPreview.Controls.Add(this.lblPreview);
             this.panelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPreview.Location = new System.Drawing.Point(406, 0);

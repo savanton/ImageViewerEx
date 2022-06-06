@@ -182,8 +182,6 @@ namespace Savan
             }
             set
             {
-                if (value == null) return;
-
                 CurrentPage = 0;
 
                 // No memory leaks here!
@@ -193,9 +191,14 @@ namespace Savan
                 _multiBmp?.Dispose();
                 _multiBmp = null;
 
+                _bmpPreview?.Dispose();
+                _bmpPreview = null;
+
                 Pages = 1;
                 MultiPage = false;
                 _multiFrame = false;
+
+                if (value == null) return;
 
                 if (value.RawFormat.Equals(ImageFormat.Tiff))
                 {
@@ -284,10 +287,13 @@ namespace Savan
         {
             set
             {
-                Bitmap temp;
+                Bitmap temp = null;
 
+                if (!string.IsNullOrEmpty(value))
+                {
                 // Make sure it does not crash on incorrect image formats
                 temp = new Bitmap(value);
+                }
 
                 Image = temp;
             }

@@ -56,6 +56,7 @@ namespace Savan
         private Cursor _grabCursor;
         private Cursor _dragCursor;
         private Bitmap _preview;
+        private string _imagePath;
 
         private static readonly Pen SelectionPen = new Pen(Color.Blue, 1);
         private static readonly Brush SelectionBrush = new SolidBrush(Color.FromArgb(60, SelectionPen.Color.R, SelectionPen.Color.G, SelectionPen.Color.B));
@@ -240,9 +241,16 @@ namespace Savan
 
         public string ImagePath
         {
+            get => _imagePath;
             set
             {
                 _drawing.ImagePath = value;
+                _imagePath = value;
+
+                if (_drawing.PreviewImage == null)
+                {
+                    pbPanel.Image = null;
+                }
 
                 UpdatePanels(true);
                 ToggleMultiPage();
@@ -259,6 +267,7 @@ namespace Savan
             set
             {
                 _drawing.Image = value;
+                pbPanel.Image = value;
 
                 UpdatePanels(true);
                 ToggleMultiPage();
@@ -266,6 +275,21 @@ namespace Savan
                 // scrollbars
                 DisplayScrollbars();
                 SetScrollbarValues();
+            }
+        }
+
+        public Image SelectedImage
+        {
+            get
+            {
+                if (_drawing.Image == null) return null;
+
+                var image = new Bitmap(_drawing.BoundingBox.Width, _drawing.BoundingBox.Height);
+                using (var g = Graphics.FromImage(image))
+                {
+                    _drawing.Draw(g);
+                    return image;
+                }
             }
         }
 
@@ -322,6 +346,71 @@ namespace Savan
         {
             _drawing.FitToScreen();
             UpdatePanels(true);
+        }
+
+        public string ZoomInCaption
+        {
+            get => tsbZoomIn.Text;
+            set => tsbZoomIn.Text = value;
+        }
+
+        public string ZoomOutCaption
+        {
+            get => tsbZoomOut.Text;
+            set => tsbZoomOut.Text = value;
+        }
+
+        public string FitToScreenCaption
+        {
+            get => tsbFitToScreen.Text;
+            set => tsbFitToScreen.Text = value;
+        }
+
+        public string Rotate270Caption
+        {
+            get => tsbRotate270.Text;
+            set => tsbRotate270.Text = value;
+        }
+
+        public string Rotate90Caption
+        {
+            get => tsbRotate90.Text;
+            set => tsbRotate90.Text = value;
+        }
+
+        public string ModeCaption
+        {
+            get => tsbMode.Text;
+            set => tsbMode.Text = value;
+        }
+
+        public string OpenCaption
+        {
+            get => tsbOpen.Text;
+            set => tsbOpen.Text = value;
+        }
+
+        public string PreviewCaption
+        {
+            get => tsbPreview.Text;
+            set => tsbPreview.Text = value;
+        }
+
+        public string NextCaption
+        {
+            get => tsbNext.Text;
+            set => tsbNext.Text = value;
+        }
+
+        public string BackCaption
+        {
+            get => tsbBack.Text;
+            set => tsbBack.Text = value;
+        }
+
+        public void Open(byte[] imageContent)
+        {
+            this.Image = new Bitmap(new MemoryStream(imageContent), true);
         }
 
         #endregion Public Members
@@ -703,11 +792,6 @@ namespace Savan
             UpdatePanels(true);
         }
 
-        public void Open(byte[] imageContent)
-        {
-            this.Image = new Bitmap(new MemoryStream(imageContent), true);
-        }
-
         private void UpdatePanels(bool updatePreview)
         {
             if (_drawing.CurrentSize.Width > 0 && _drawing.OriginalSize.Width > 0)
@@ -1040,17 +1124,26 @@ namespace Savan
 
         private void tsbOpen_Click(object sender, EventArgs e)
         {
+            Browse();
+        }
+
+        public string Browse(string path = null)
+        {
             using (var openFileDialog = new OpenFileDialog())
             {
+                openFileDialog.Multiselect = false;
+                openFileDialog.CheckFileExists = true;
+                openFileDialog.FileName = path;
                 openFileDialog.Filter =
                     "Image Files|*.jpg;*.jpeg;*.gif;*.bmp;*.png;*.tif;*.tiff;*.wmf;*.emf|JPEG Files (*.jpg)|*.jpg;*.jpeg|GIF Files (*.gif)|*.gif|BMP Files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|TIF files (*.tif;*.tiff)|*.tif;*.tiff|EMF/WMF Files (*.wmf;*.emf)|*.wmf;*.emf|All files (*.*)|*.*";
 
                 if (openFileDialog.ShowDialog(this) == DialogResult.OK)
                 {
                     this.ImagePath = openFileDialog.FileName;
+                    return openFileDialog.FileName;
                 }
 
-                UpdatePanels(true);
+                return null;
             }
         }
 
