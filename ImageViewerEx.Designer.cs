@@ -49,16 +49,16 @@
             this.tslblNavigation = new System.Windows.Forms.ToolStripLabel();
             this.tstbNavigation = new System.Windows.Forms.ToolStripTextBox();
             this.layoutMain = new System.Windows.Forms.TableLayoutPanel();
+            this.layoutImageView = new System.Windows.Forms.TableLayoutPanel();
             this.pbFull = new Savan.PanelDoubleBuffered();
             this.sbVert = new System.Windows.Forms.VScrollBar();
             this.sbHoriz = new System.Windows.Forms.HScrollBar();
-            this.sbPanel = new System.Windows.Forms.Panel();
             this.panelPreview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbPanel)).BeginInit();
             this.tsLeft.SuspendLayout();
             this.tsTop.SuspendLayout();
             this.layoutMain.SuspendLayout();
-            this.pbFull.SuspendLayout();
+            this.layoutImageView.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelPreview
@@ -66,10 +66,10 @@
             this.panelPreview.BackColor = System.Drawing.Color.LightSteelBlue;
             this.panelPreview.Controls.Add(this.lblPreview);
             this.panelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelPreview.Location = new System.Drawing.Point(406, 0);
-            this.panelPreview.Margin = new System.Windows.Forms.Padding(4, 0, 0, 2);
+            this.panelPreview.Location = new System.Drawing.Point(350, 0);
+            this.panelPreview.Margin = new System.Windows.Forms.Padding(3, 0, 0, 2);
             this.panelPreview.Name = "panelPreview";
-            this.panelPreview.Size = new System.Drawing.Size(199, 35);
+            this.panelPreview.Size = new System.Drawing.Size(150, 30);
             this.panelPreview.TabIndex = 12;
             // 
             // lblPreview
@@ -80,7 +80,7 @@
             this.lblPreview.Location = new System.Drawing.Point(0, 0);
             this.lblPreview.Margin = new System.Windows.Forms.Padding(0);
             this.lblPreview.Name = "lblPreview";
-            this.lblPreview.Size = new System.Drawing.Size(197, 33);
+            this.lblPreview.Size = new System.Drawing.Size(150, 30);
             this.lblPreview.TabIndex = 0;
             this.lblPreview.Text = "Preview";
             this.lblPreview.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -89,10 +89,10 @@
             // 
             this.pbPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pbPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pbPanel.Location = new System.Drawing.Point(406, 37);
-            this.pbPanel.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
+            this.pbPanel.Location = new System.Drawing.Point(350, 32);
+            this.pbPanel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.pbPanel.Name = "pbPanel";
-            this.pbPanel.Size = new System.Drawing.Size(199, 144);
+            this.pbPanel.Size = new System.Drawing.Size(150, 117);
             this.pbPanel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbPanel.TabIndex = 10;
             this.pbPanel.TabStop = false;
@@ -116,11 +116,11 @@
             this.tsbOpen,
             this.tsbPreview});
             this.tsLeft.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
-            this.tsLeft.Location = new System.Drawing.Point(0, 37);
+            this.tsLeft.Location = new System.Drawing.Point(0, 32);
             this.tsLeft.Name = "tsLeft";
             this.tsLeft.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.tsLeft.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.tsLeft.Size = new System.Drawing.Size(26, 383);
+            this.tsLeft.Size = new System.Drawing.Size(26, 318);
             this.tsLeft.TabIndex = 15;
             this.tsLeft.Text = "toolStrip1";
             // 
@@ -237,7 +237,7 @@
             this.tsTop.Name = "tsTop";
             this.tsTop.Padding = new System.Windows.Forms.Padding(0);
             this.tsTop.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.tsTop.Size = new System.Drawing.Size(376, 37);
+            this.tsTop.Size = new System.Drawing.Size(321, 32);
             this.tsTop.TabIndex = 24;
             this.tsTop.Text = "toolStrip2";
             // 
@@ -248,7 +248,7 @@
             this.tscbZoom.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tscbZoom.Margin = new System.Windows.Forms.Padding(3, 0, 0, 9);
             this.tscbZoom.Name = "tscbZoom";
-            this.tscbZoom.Size = new System.Drawing.Size(100, 28);
+            this.tscbZoom.Size = new System.Drawing.Size(76, 23);
             this.tscbZoom.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             this.tscbZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tscbZoom_KeyPress);
             // 
@@ -282,7 +282,7 @@
             // 
             this.tslblNavigation.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tslblNavigation.Name = "tslblNavigation";
-            this.tslblNavigation.Size = new System.Drawing.Size(27, 34);
+            this.tslblNavigation.Size = new System.Drawing.Size(21, 29);
             this.tslblNavigation.Text = "/ 0";
             // 
             // tstbNavigation
@@ -291,7 +291,7 @@
             this.tstbNavigation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tstbNavigation.MaxLength = 5;
             this.tstbNavigation.Name = "tstbNavigation";
-            this.tstbNavigation.Size = new System.Drawing.Size(39, 37);
+            this.tstbNavigation.Size = new System.Drawing.Size(30, 32);
             this.tstbNavigation.Text = "0";
             this.tstbNavigation.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tstbNavigation.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tstbNavigation_KeyPress);
@@ -303,33 +303,48 @@
             this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.layoutMain.Controls.Add(this.pbFull, 1, 1);
+            this.layoutMain.Controls.Add(this.layoutImageView, 1, 1);
             this.layoutMain.Controls.Add(this.tsLeft, 0, 1);
             this.layoutMain.Controls.Add(this.tsTop, 1, 0);
             this.layoutMain.Controls.Add(this.pbPanel, 2, 1);
             this.layoutMain.Controls.Add(this.panelPreview, 2, 0);
             this.layoutMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutMain.Location = new System.Drawing.Point(0, 0);
-            this.layoutMain.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.layoutMain.Margin = new System.Windows.Forms.Padding(2);
             this.layoutMain.Name = "layoutMain";
             this.layoutMain.RowCount = 2;
             this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.layoutMain.Size = new System.Drawing.Size(605, 420);
+            this.layoutMain.Size = new System.Drawing.Size(500, 350);
             this.layoutMain.TabIndex = 26;
+            // 
+            // layoutImageView
+            // 
+            this.layoutImageView.ColumnCount = 2;
+            this.layoutImageView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutImageView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.layoutImageView.Controls.Add(this.pbFull, 0, 0);
+            this.layoutImageView.Controls.Add(this.sbVert, 1, 0);
+            this.layoutImageView.Controls.Add(this.sbHoriz, 0, 1);
+            this.layoutImageView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutImageView.Location = new System.Drawing.Point(26, 32);
+            this.layoutImageView.Margin = new System.Windows.Forms.Padding(0);
+            this.layoutImageView.Name = "layoutImageView";
+            this.layoutImageView.RowCount = 2;
+            this.layoutImageView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutImageView.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.layoutImageView.Size = new System.Drawing.Size(321, 318);
+            this.layoutImageView.TabIndex = 27;
             // 
             // pbFull
             // 
             this.pbFull.BackColor = System.Drawing.SystemColors.ControlLight;
             this.pbFull.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbFull.Controls.Add(this.sbVert);
-            this.pbFull.Controls.Add(this.sbHoriz);
-            this.pbFull.Controls.Add(this.sbPanel);
             this.pbFull.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbFull.Location = new System.Drawing.Point(26, 37);
+            this.pbFull.Location = new System.Drawing.Point(0, 0);
             this.pbFull.Margin = new System.Windows.Forms.Padding(0);
             this.pbFull.Name = "pbFull";
-            this.pbFull.Size = new System.Drawing.Size(376, 383);
+            this.pbFull.Size = new System.Drawing.Size(304, 301);
             this.pbFull.TabIndex = 23;
             this.pbFull.Click += new System.EventHandler(this.pbFull_Click);
             this.pbFull.DragDrop += new System.Windows.Forms.DragEventHandler(this.pbFull_DragDrop);
@@ -347,9 +362,9 @@
             // 
             this.sbVert.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sbVert.Location = new System.Drawing.Point(351, 0);
+            this.sbVert.Location = new System.Drawing.Point(304, 0);
             this.sbVert.Name = "sbVert";
-            this.sbVert.Size = new System.Drawing.Size(17, 358);
+            this.sbVert.Size = new System.Drawing.Size(17, 301);
             this.sbVert.TabIndex = 0;
             this.sbVert.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbVert_Scroll);
             // 
@@ -357,33 +372,23 @@
             // 
             this.sbHoriz.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sbHoriz.Location = new System.Drawing.Point(0, 357);
+            this.sbHoriz.Location = new System.Drawing.Point(0, 301);
             this.sbHoriz.Name = "sbHoriz";
-            this.sbHoriz.Size = new System.Drawing.Size(351, 17);
+            this.sbHoriz.Size = new System.Drawing.Size(304, 17);
             this.sbHoriz.TabIndex = 1;
             this.sbHoriz.Scroll += new System.Windows.Forms.ScrollEventHandler(this.sbHoriz_Scroll);
             // 
-            // sbPanel
-            // 
-            this.sbPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.sbPanel.BackColor = System.Drawing.SystemColors.Info;
-            this.sbPanel.Location = new System.Drawing.Point(353, 358);
-            this.sbPanel.Margin = new System.Windows.Forms.Padding(4);
-            this.sbPanel.Name = "sbPanel";
-            this.sbPanel.Size = new System.Drawing.Size(21, 20);
-            this.sbPanel.TabIndex = 2;
-            // 
             // ImageViewerEx
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.layoutMain);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Margin = new System.Windows.Forms.Padding(0);
-            this.MinimumSize = new System.Drawing.Size(605, 193);
+            this.MinimumSize = new System.Drawing.Size(454, 157);
             this.Name = "ImageViewerEx";
-            this.Size = new System.Drawing.Size(605, 420);
+            this.Size = new System.Drawing.Size(500, 350);
             this.Load += new System.EventHandler(this.ImageViewerEx_Load);
             this.Click += new System.EventHandler(this.ImageViewerEx_Click);
             this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.ImageViewerEx_MouseWheel);
@@ -395,7 +400,7 @@
             this.tsTop.PerformLayout();
             this.layoutMain.ResumeLayout(false);
             this.layoutMain.PerformLayout();
-            this.pbFull.ResumeLayout(false);
+            this.layoutImageView.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -406,7 +411,6 @@
         private System.Windows.Forms.Label lblPreview;
         private System.Windows.Forms.PictureBox pbPanel;
         private PanelDoubleBuffered pbFull;
-        private System.Windows.Forms.Panel sbPanel;
         private System.Windows.Forms.HScrollBar sbHoriz;
         private System.Windows.Forms.VScrollBar sbVert;
         private System.Windows.Forms.ToolStrip tsLeft;
@@ -425,5 +429,6 @@
         private System.Windows.Forms.ToolStripButton tsbBack;
         private System.Windows.Forms.ToolStripLabel tslblNavigation;
         private System.Windows.Forms.ToolStripTextBox tstbNavigation;
+        private System.Windows.Forms.TableLayoutPanel layoutImageView;
     }
 }

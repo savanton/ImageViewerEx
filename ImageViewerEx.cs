@@ -48,8 +48,8 @@ namespace Savan
         private bool _animationEnabled;
         private bool _selectMode;
         private bool _shiftSelecting;
-        private Point _ptSelectionStart;
-        private Point _ptSelectionEnd;
+        private Point? _ptSelectionStart;
+        private Point? _ptSelectionEnd;
 
         private bool _panelDragging;
         private bool _showPreview = true;
@@ -284,10 +284,20 @@ namespace Savan
             {
                 if (_drawing.Image == null) return null;
 
-                var image = new Bitmap(_drawing.BoundingBox.Width, _drawing.BoundingBox.Height);
+                var ratioX = (double)_drawing.OriginalSize.Width / _drawing.CurrentSize.Width;
+                var ratioY = (double)_drawing.OriginalSize.Height / _drawing.CurrentSize.Height;
+
+                var selectionRect = CalculateSelectionRectangle();
+                var boxWidth = (int)(selectionRect.Width * ratioX);
+                var boxHeight = (int)(selectionRect.Height * ratioY);
+                var positionX = (int)(Math.Abs(_drawing.BoundingBox.X) * ratioX + selectionRect.X * ratioX);
+                var positionY = (int)(Math.Abs((double)_drawing.BoundingBox.Y) * ratioY + selectionRect.Y * ratioY);
+
+                var image = new Bitmap(boxWidth, boxHeight);
                 using (var g = Graphics.FromImage(image))
                 {
-                    _drawing.Draw(g);
+                    g.DrawImage(_drawing.Image, new Rectangle(0, 0, boxWidth, boxHeight),
+                        new Rectangle(positionX, positionY, boxWidth, boxHeight), GraphicsUnit.Pixel);
                     return image;
                 }
             }
@@ -325,7 +335,6 @@ namespace Savan
             {
                 sbHoriz.Visible = false;
                 sbVert.Visible = false;
-                sbPanel.Visible = false;
             }
         }
 
@@ -419,12 +428,24 @@ namespace Savan
 
         protected virtual void OnRotation(ImageViewerRotationEventArgs e)
         {
+            ClearSelection();
             AfterRotation?.Invoke(this, e);
         }
 
         protected virtual void OnZoom(ImageViewerZoomEventArgs e)
         {
+            ClearSelection();
             AfterZoom?.Invoke(this, e);
+        }
+
+        private void ClearSelection()
+        {
+            if (_ptSelectionStart.HasValue)
+            {
+                // Clear the selection rectangle
+                _ptSelectionEnd = null;
+                _ptSelectionStart = null;
+            }
         }
 
         private bool IsKeyPressed(int key)
@@ -509,39 +530,17 @@ namespace Savan
                     {
                         this.sbVert.Visible = false;
                     }
-
-                    if (this.sbVert.Visible == true && this.sbHoriz.Visible == true)
-                    {
-                        this.sbPanel.Visible = true;
-                        this.sbVert.Height = this.pbFull.Height - 18;
-                        this.sbHoriz.Width = this.pbFull.Width - 18;
-                    }
-                    else
-                    {
-                        this.sbPanel.Visible = false;
-
-                        if (this.sbVert.Visible)
-                        {
-                            this.sbVert.Height = this.pbFull.Height;
-                        }
-                        else
-                        {
-                            this.sbHoriz.Width = this.pbFull.Width;
-                        }
-                    }
                 }
                 else
                 {
                     this.sbHoriz.Visible = false;
                     this.sbVert.Visible = false;
-                    this.sbPanel.Visible = false;
                 }
             }
             else
             {
                 this.sbHoriz.Visible = false;
                 this.sbVert.Visible = false;
-                this.sbPanel.Visible = false;
             }
         }
 
@@ -639,18 +638,9 @@ namespace Savan
             _drawing.Draw(e.Graphics);
 
             // Draw selection rectangle
-            if (_shiftSelecting)
+            if (_ptSelectionEnd.HasValue && _ptSelectionStart.HasValue)
             {
-                var rect = new Rectangle()
-                {
-                    X = Math.Min(_ptSelectionStart.X, _ptSelectionEnd.X),
-                    Y = Math.Min(_ptSelectionStart.Y, _ptSelectionEnd.Y),
-                    Width = Math.Abs(_ptSelectionStart.X - _ptSelectionEnd.X),
-                    Height = Math.Abs(_ptSelectionStart.Y - _ptSelectionEnd.Y)
-
-                };
-
-                e.Graphics.FillRectangle(SelectionBrush, rect);
+                e.Graphics.FillRectangle(SelectionBrush, CalculateSelectionRectangle());
             }
         }
 
@@ -658,6 +648,8 @@ namespace Savan
         {
             if (e.Button == MouseButtons.Left)
             {
+                ClearSelection();
+
                 // Left Shift or Right Shift pressed? Or is select mode one?
                 if (this.IsKeyPressed(0xA0) || this.IsKeyPressed(0xA1) || _selectMode == true)
                 {
@@ -667,12 +659,10 @@ namespace Savan
                     _shiftSelecting = true;
 
                     // Initial selection
-                    _ptSelectionStart.X = e.X;
-                    _ptSelectionStart.Y = e.Y;
+                    _ptSelectionStart = new Point(e.X, e.Y);
 
                     // No selection end
-                    _ptSelectionEnd.X = -1;
-                    _ptSelectionEnd.Y = -1;
+                    _ptSelectionEnd = null;
                 }
                 else
                 {
@@ -693,23 +683,14 @@ namespace Savan
             // Am i dragging or selecting?
             if (_shiftSelecting == true)
             {
-                // Calculate my selection rectangle
-                Rectangle rect = CalculateSelectionRectangle(_ptSelectionStart, _ptSelectionEnd);
-
-                // Clear the selection rectangle
-                _ptSelectionEnd.X = -1;
-                _ptSelectionEnd.Y = -1;
-                _ptSelectionStart.X = -1;
-                _ptSelectionStart.Y = -1;
+                // If selection wasn't made (mouse wasn't moved)
+                if (!_ptSelectionEnd.HasValue)
+                {
+                    ClearSelection();
+                }
 
                 // Stop selecting
                 _shiftSelecting = false;
-
-                // Position of the panel to the screen
-                Point ptPbFull = PointToScreen(pbFull.Location);
-
-                // Zoom to my selection
-                _drawing.ZoomToSelection(rect, ptPbFull);
 
                 // Refresh my screen & update my preview panel
                 pbFull.Invalidate();
@@ -735,8 +716,7 @@ namespace Savan
             if (_shiftSelecting == true)
             {
                 // Keep selecting
-                _ptSelectionEnd.X = e.X;
-                _ptSelectionEnd.Y = e.Y;
+                _ptSelectionEnd =  new Point(e.X, e.Y);
 
                 pbFull.Invalidate();
             }
@@ -836,10 +816,13 @@ namespace Savan
                         double ratioX = (double)_drawing.PreviewImage.Size.Width / (double)_drawing.CurrentSize.Width;
                         double ratioY = (double)_drawing.PreviewImage.Size.Height / (double)_drawing.CurrentSize.Height;
 
-                        double boxWidth = pbFull.Width * ratioX;
-                        double boxHeight = pbFull.Height * ratioY;
-                        double positionX = ((_drawing.BoundingBox.X - (_drawing.BoundingBox.X * 2)) * ratioX);
-                        double positionY = ((_drawing.BoundingBox.Y - (_drawing.BoundingBox.Y * 2)) * ratioY);
+
+                        var selectionRect = CalculateSelectionRectangle();
+
+                        double boxWidth = selectionRect.Width * ratioX;
+                        double boxHeight = selectionRect.Height * ratioY;
+                        double positionX = Math.Abs((double)_drawing.BoundingBox.X) * ratioX + selectionRect.X * ratioX;
+                        double positionY = Math.Abs((double)_drawing.BoundingBox.Y) * ratioY + selectionRect.Y * ratioY;
 
                         if (boxHeight >= _drawing.PreviewImage.Size.Height)
                         {
@@ -948,18 +931,16 @@ namespace Savan
             pbFull.Cursor = Cursors.Default;
         }
 
-        private Rectangle CalculateSelectionRectangle(Point ptSelectStart, Point ptSelectEnd)
+        private Rectangle CalculateSelectionRectangle()
         {
-            ptSelectStart = pbFull.PointToScreen(ptSelectStart);
-            ptSelectEnd = pbFull.PointToScreen(ptSelectEnd);
+            if (!_ptSelectionStart.HasValue || !_ptSelectionEnd.HasValue) return Rectangle.Empty;
 
             var rect = new Rectangle()
             {
-                X = Math.Min(ptSelectStart.X, ptSelectEnd.X),
-                Y = Math.Min(ptSelectStart.Y, ptSelectEnd.Y),
-                Width = Math.Abs(ptSelectStart.X - ptSelectEnd.X),
-                Height = Math.Abs(ptSelectStart.Y - ptSelectEnd.Y)
-
+                X = Math.Min(_ptSelectionStart.Value.X, _ptSelectionEnd.Value.X),
+                Y = Math.Min(_ptSelectionStart.Value.Y, _ptSelectionEnd.Value.Y),
+                Width = Math.Abs(_ptSelectionStart.Value.X - _ptSelectionEnd.Value.X),
+                Height = Math.Abs(_ptSelectionStart.Value.Y - _ptSelectionEnd.Value.Y)
             };
 
             return rect;
@@ -1008,6 +989,8 @@ namespace Savan
 
         private void sbVert_Scroll(object sender, ScrollEventArgs e)
         {
+            ClearSelection();
+
             if (!_isScrolling)
             {
                 double perPercent = (double)this.CurrentSize.Height / 101.0;
@@ -1026,6 +1009,8 @@ namespace Savan
 
         private void sbHoriz_Scroll(object sender, ScrollEventArgs e)
         {
+            ClearSelection();
+
             if (!_isScrolling)
             {
                 double perPercent = (double)this.CurrentSize.Width / 101.0;

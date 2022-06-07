@@ -291,8 +291,8 @@ namespace Savan
 
                 if (!string.IsNullOrEmpty(value))
                 {
-                // Make sure it does not crash on incorrect image formats
-                temp = new Bitmap(value);
+                    // Make sure it does not crash on incorrect image formats
+                    temp = new Bitmap(value);
                 }
 
                 Image = temp;
@@ -534,59 +534,6 @@ namespace Savan
             return previewBmp;
         }
 
-        public void ZoomToSelection(Rectangle selection, Point ptPbFull)
-        {
-            var x = (selection.X - ptPbFull.X);
-            var y = (selection.Y - ptPbFull.Y);
-            var width = selection.Width;
-            var height = selection.Height;
-
-            // So, where did my selection start on the entire picture?
-            var selectedX = (int)((double)(((double)_boundingRect.X - ((double)_boundingRect.X * 2)) + (double)x) / Zoom);
-            var selectedY = (int)((double)(((double)_boundingRect.Y - ((double)_boundingRect.Y * 2)) + (double)y) / Zoom);
-            var selectedWidth = width;
-            var selectedHeight = height;
-
-            // The selection width on the scale of the Original size!
-            if (Zoom < 1.0 || Zoom > 1.0)
-            {
-                selectedWidth = Convert.ToInt32((double)width / Zoom);
-                selectedHeight = Convert.ToInt32((double)height / Zoom);
-            }
-
-            // What is the highest possible zoomrate?
-            var zoomX = ((double)PanelWidth / (double)selectedWidth);
-            var zoomY = ((double)PanelHeight / (double)selectedHeight);
-
-            var newZoom = Math.Min(zoomX, zoomY);
-
-            // Avoid Int32 crashes!
-            if (newZoom * 100 < Int32.MaxValue && newZoom * 100 > Int32.MinValue)
-            {
-                SetZoom(newZoom);
-
-                selectedWidth = (int)((double)selectedWidth * newZoom);
-                selectedHeight = (int)((double)selectedHeight * newZoom);
-
-                // Center the selected area
-                var offsetX = 0;
-                var offsetY = 0;
-                if (selectedWidth < PanelWidth)
-                {
-                    offsetX = (PanelWidth - selectedWidth) / 2;
-                }
-                if (selectedHeight < PanelHeight)
-                {
-                    offsetY = (PanelHeight - selectedHeight) / 2;
-                }
-
-                _boundingRect.X = (int)((int)((double)selectedX * newZoom) - ((int)((double)selectedX * newZoom) * 2)) + offsetX;
-                _boundingRect.Y = (int)((int)((double)selectedY * newZoom) - ((int)((double)selectedY * newZoom) * 2)) + offsetY;
-
-                AvoidOutOfScreen();
-            }
-        }
-
         public void JumpToOrigin(int x, int y, int width, int height, int pWidth, int pHeight)
         {
             var zoom = (double)_boundingRect.Width / (double)width;
@@ -651,17 +598,11 @@ namespace Savan
             if (Image == null)
                 return;
 
-            // Make sure zoom steps are with 25%
-            var index = 0.25 - (Zoom % 0.25);
+            // Increase zoom level by 25%
+            Zoom *= 1.25;
 
-            if (index != 0)
-            {
-                Zoom += index;
-            }
-            else
-            {
-                Zoom += 0.25;
-            }
+            // Make sure that maximal zoom level is 1000%
+            if (Zoom > 10) Zoom = 10;
 
             SetZoom(Zoom);
         }
@@ -671,18 +612,11 @@ namespace Savan
             if (Image == null)
                 return;
 
-            // Make sure zoom steps are with 25% and higher than 0%
-            if (Zoom - 0.25 > 0)
-            {
-                if (((Zoom - 0.25) % 0.25) != 0)
-                {
-                    Zoom -= Zoom % 0.25;
-                }
-                else
-                {
-                    Zoom -= 0.25;
-                }
-            }
+            // Decrease zoom level by 25%
+            Zoom /= 1.25;
+
+            // Make sure that minimal zoom level is 1%
+            if (Zoom < 0.01) Zoom = 0.01;
 
             SetZoom(Zoom);
         }
